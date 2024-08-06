@@ -3,26 +3,30 @@ package com.realestate.backendrealestate.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @Entity
-@Table(name = "property_invoice")
-public class PropertyInvoice {
+public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long propertyInvoiceId;
+    private Long reservationId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "property_id")
     private Property property;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "pjService_id")
-    private PjService pjService;
+    @JoinColumn(name = "traveler_id")
+    private Traveler traveler;
 
-    private double total;
+    private Date checkinDate;
+    private Date checkoutDate;
+    private ReservationStatus reservationStatus;
+    private double price;
 }

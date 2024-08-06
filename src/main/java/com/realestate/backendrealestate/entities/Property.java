@@ -30,12 +30,12 @@ public class Property {
     private Date occupiedTo;
     private double pricePerNight;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
 
     //List of Property Invoices
-    @OneToMany(mappedBy = "pjService", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<PropertyInvoice> propertyInvoices;
 
     //List of Property Images

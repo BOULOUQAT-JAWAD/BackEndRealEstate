@@ -3,7 +3,6 @@ package com.realestate.backendrealestate.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -21,8 +20,12 @@ public class Client {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
     private List<Property> properties;
+
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<SubscriptionClient> subscriptionClients;
+
 //    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
 //    private List<Education> educations;
 //    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
