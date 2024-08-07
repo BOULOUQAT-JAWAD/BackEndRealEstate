@@ -1,4 +1,4 @@
-package com.realestate.backendrealestate.entities;
+package com.realestate.backendrealestate.core.enums;
 
 public enum PropertyType {
     Appartement,

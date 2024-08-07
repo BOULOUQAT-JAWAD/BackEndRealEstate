@@ -20,7 +20,7 @@ public class Traveler {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "traveler",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "traveler",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SubscriptionTraveler> subscriptionTravelers;
 
     @OneToMany(mappedBy = "traveler",fetch = FetchType.LAZY, cascade = CascadeType.ALL)

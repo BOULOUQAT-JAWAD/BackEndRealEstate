@@ -20,10 +20,10 @@ public class Provider {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "providerService_id")
-    private ProviderService providerService;
+    private ProviderInvoice providerInvoice;
 
-    @OneToMany(mappedBy = "provider",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "provider",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Availability> availabilities;
 }

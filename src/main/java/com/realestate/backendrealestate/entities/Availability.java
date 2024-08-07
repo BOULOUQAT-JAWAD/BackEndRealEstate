@@ -21,7 +21,7 @@ public class Availability {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 }

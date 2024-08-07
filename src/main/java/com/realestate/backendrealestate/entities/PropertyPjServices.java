@@ -9,20 +9,17 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-@Table(name = "property_invoice")
-public class PropertyInvoice {
+public class PropertyPjServices {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long propertyInvoiceId;
+    private Long propertyPjServicesId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
     private Property property;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pjService_id")
     private PjService pjService;
-
-    private double total;
 }

@@ -20,7 +20,7 @@ public class SubscriptionClient {
     private Date subsDate;
     private Date endSubsDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
 }

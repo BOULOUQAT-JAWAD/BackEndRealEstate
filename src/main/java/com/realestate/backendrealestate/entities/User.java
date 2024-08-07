@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.entities;
 
+import com.realestate.backendrealestate.core.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    private Long userId;
 
     @Column(unique = true)
     private String email;

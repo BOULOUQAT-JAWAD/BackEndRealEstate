@@ -20,10 +20,10 @@ public class Client {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client",fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
     private List<Property> properties;
 
-    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SubscriptionClient> subscriptionClients;
 
 //    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)

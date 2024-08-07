@@ -1,10 +1,10 @@
 package com.realestate.backendrealestate.entities;
 
+import com.realestate.backendrealestate.core.enums.SubscriptionType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,11 +23,11 @@ public class SubscriptionTraveler {
     private Date subsDate;
     private Date endSubsDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "traveler_id")
     private Traveler traveler;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travelerOffer_id")
     private TravelerOffer travelerOffer;
 

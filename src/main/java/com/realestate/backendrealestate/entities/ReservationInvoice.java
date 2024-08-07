@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.entities;
 
+import com.realestate.backendrealestate.core.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,11 +16,11 @@ public class ReservationInvoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationInvoiceId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pjService_id")
     private PjService pjService;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 

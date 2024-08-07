@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.entities;
 
+import com.realestate.backendrealestate.core.enums.PjServiceType;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,5 +1,7 @@
 package com.realestate.backendrealestate.entities;
 
+import com.realestate.backendrealestate.core.enums.PropertyStatus;
+import com.realestate.backendrealestate.core.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,16 +34,19 @@ public class Property {
     private Date occupiedTo;
     private double pricePerNight;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
 
     //List of Property Invoices
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<PropertyInvoice> propertyInvoices;
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PropertyPjServices> propertyPjServices;
 
     //List of Property Images
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PropertyImages> propertyImages;
+
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Reservation> reservations;
 
 }
