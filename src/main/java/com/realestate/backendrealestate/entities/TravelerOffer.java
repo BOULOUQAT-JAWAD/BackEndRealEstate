@@ -16,6 +16,7 @@ public class TravelerOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long travelerOfferId;
+    @Enumerated(EnumType.STRING)
     private TravelerOfferType travelerOfferType;
     private double price;
     private boolean hasAds;

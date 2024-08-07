@@ -17,6 +17,7 @@ public class SubscriptionTraveler {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subscriptionTravelerId;
+    @Enumerated(EnumType.STRING)
     private SubscriptionType subscriptionType;
     private double totalPrice;
     private Date subsDate;

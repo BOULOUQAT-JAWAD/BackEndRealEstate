@@ -1,9 +1,6 @@
 package com.realestate.backendrealestate.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
@@ -20,5 +17,6 @@ public class PjService {
     private String title;
     private String description;
     private double price;
+    @Enumerated(EnumType.STRING)
     private PjServiceType pjServiceType;
 }

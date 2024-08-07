@@ -20,7 +20,9 @@ public class Property {
     private String description;
     private String country;
     private String city;
+    @Enumerated(EnumType.STRING)
     private PropertyType propertyType;
+    @Enumerated(EnumType.STRING)
     private PropertyStatus propertyStatus;
 //    private String locationType;
     private int numberOfRooms;

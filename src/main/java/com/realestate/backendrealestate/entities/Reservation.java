@@ -27,6 +27,6 @@ public class Reservation {
 
     private Date checkinDate;
     private Date checkoutDate;
-    private ReservationStatus reservationStatus;
+    private ReservationStatus status;
     private double price;
 }

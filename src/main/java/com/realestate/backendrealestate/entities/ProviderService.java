@@ -3,6 +3,8 @@ package com.realestate.backendrealestate.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -23,9 +25,16 @@ public class ProviderService {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    //reservationId
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "property_id")
-//    private Property property;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
+
+    @Enumerated(EnumType.STRING)
+    private ServiceType serviceType;
+    private Date date;
+    private String rating;
+    private String gain;
+    @Enumerated(EnumType.STRING)
+    private ProviderServiceType status;
 
 }

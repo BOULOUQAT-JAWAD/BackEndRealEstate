@@ -1,9 +1,6 @@
 package com.realestate.backendrealestate.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
@@ -18,4 +15,15 @@ public class ReservationInvoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationInvoiceId;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pjService_id")
+    private PjService pjService;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
+
+    private double total;
+    private double discount;
+    private ReservationStatus status;
 }
