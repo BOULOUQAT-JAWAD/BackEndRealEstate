@@ -3,6 +3,7 @@ package com.realestate.backendrealestate.security.config;
 
 import com.realestate.backendrealestate.core.enums.Role;
 import com.realestate.backendrealestate.repositories.UserRepository;
+import com.realestate.backendrealestate.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,11 +20,11 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.realestate.backendrealestate.entities.User myUser = userRepository.findByEmail(email);
+        com.realestate.backendrealestate.entities.User myUser = userService.getUserByEmail(email);
         return new User(myUser.getEmail(), myUser.getPassword(), myUser.getActivated(),
                 true, true, true, getAuthorities(myUser.getRole()));
     }

@@ -28,4 +28,7 @@ public class User {
     private String dob;
     private String gender;
     private String phoneNumber;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_token_id")
+    private UserToken userToken;
 }
