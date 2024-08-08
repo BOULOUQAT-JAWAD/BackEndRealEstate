@@ -33,6 +33,7 @@ public class Property {
     private Date occupiedFrom;
     private Date occupiedTo;
     private double pricePerNight;
+    private boolean publish;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
