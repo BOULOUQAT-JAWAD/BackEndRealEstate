@@ -152,8 +152,10 @@ public class SecurityService {
     }
 
 
-    public static User getAuthenticatedUser(){
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public User getAuthenticatedUser(){
+        org.springframework.security.core.userdetails.User
+                user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userService.getUserByEmail(user.getUsername());
     }
 
 }

@@ -2,7 +2,6 @@ package com.realestate.backendrealestate.repositories;
 
 import com.realestate.backendrealestate.core.enums.TokenType;
 import com.realestate.backendrealestate.entities.User;
-import com.realestate.backendrealestate.entities.UserToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -3,6 +3,11 @@ package com.realestate.backendrealestate.entities;
 import com.realestate.backendrealestate.core.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,7 +16,7 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name="\"user\"")
-public class User {
+public class User  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +36,5 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_token_id")
     private UserToken userToken;
+
 }
