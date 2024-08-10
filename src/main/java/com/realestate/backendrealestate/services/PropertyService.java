@@ -2,21 +2,21 @@ package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.dtos.requests.PropertyRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PropertyResponseDTO;
-import com.realestate.backendrealestate.entities.Client;
-import com.realestate.backendrealestate.entities.Property;
-import com.realestate.backendrealestate.entities.PropertyImages;
+import com.realestate.backendrealestate.entities.*;
 import com.realestate.backendrealestate.mappers.PropertyMapper;
 import com.realestate.backendrealestate.repositories.ClientRepository;
 import com.realestate.backendrealestate.repositories.PropertyImagesRepository;
 import com.realestate.backendrealestate.repositories.PropertyRepository;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,15 +25,16 @@ import java.util.Optional;
 public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final PropertyImagesRepository propertyImagesRepository;
-    private final ClientRepository clientRepository;
     private final PropertyMapper propertyMapper;
+    private final PropertyImagesService propertyImagesService;
+    private final PropertyPjServicesService propertyPjServicesService;
+    private final ClientService clientService;
 
     public PropertyResponseDTO get(long propertyId) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new IllegalArgumentException("Property not found with id: " + propertyId));
+        Property property = findPropertyById(propertyId);
 
         // Fetch the images related to the property
-        List<PropertyImages> images = propertyImagesRepository.findAllByProperty(property);
+        List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
 
         // Convert Property to PropertyResponseDTO
         PropertyResponseDTO dto = propertyMapper.toDto(property);
@@ -48,7 +49,7 @@ public class PropertyService {
         return propertyRepository.findAll().stream()
                 .map(property -> {
                     // Fetch the images related to the property
-                    List<PropertyImages> images = propertyImagesRepository.findAllByProperty(property);
+                    List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
 
                     // Convert Property to PropertyResponseDTO
                     PropertyResponseDTO dto = propertyMapper.toDto(property);
@@ -61,49 +62,46 @@ public class PropertyService {
                 .toList();
     }
 
-    public PropertyResponseDTO saveOrUpdate(@Valid PropertyRequestDTO propertyRequestDTO) {
-        Property property;
-
-        if (propertyRequestDTO.getPropertyId() != null) {
-            // Update existing property
-            property = propertyRepository.findById(propertyRequestDTO.getPropertyId())
-                    .orElseThrow(() -> new IllegalArgumentException("Property not found with id: " + propertyRequestDTO.getPropertyId()));
-
-            // Map the updated fields from DTO to the existing entity
-            propertyMapper.updatePropertyFromDto(propertyRequestDTO, property);
-        } else {
-            // Create a new property
-            property = propertyMapper.toEntity(propertyRequestDTO);
-        }
-
-        Client client = getAuthenticatedClient();
-        log.info("client id: {}", client.getClientId());
-
-        // Set the client
+    @Transactional
+    public PropertyResponseDTO saveOrUpdate(@Valid PropertyRequestDTO propertyRequestDTO,
+                                            @Nullable List<MultipartFile> images,
+                                            @Nullable List<PjService> pjServices) {
+        Property property = getPropertyForSaveOrUpdate(propertyRequestDTO);
+        Client client = clientService.getAuthenticatedClient();
         property.setClient(client);
-
-        // Save the property to the repository
         Property savedProperty = propertyRepository.save(property);
 
-        // Return the saved entity as a DTO
+        if (pjServices != null) {
+            propertyPjServicesService.updatePropertyServices(savedProperty, pjServices);
+        }
+
+        if (images != null) {
+            propertyImagesService.updatePropertyImages(savedProperty, images);
+        }
+
         return propertyMapper.toDto(savedProperty);
     }
 
+    @Transactional
     public void delete(long id) {
-        Property property = propertyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Property not found with id: " + id));
+        Property property = findPropertyById(id);
+        propertyImagesService.deleteImagesForProperty(property);
         propertyRepository.deleteById(property.getPropertyId());
     }
 
-    public Client getAuthenticatedClient(){
-        try {
-            return clientRepository.findByUser(
-                    AuthService.getAuthenticatedUser()
-            ).orElseThrow(
-                    () -> new Exception("Client not found")
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    private Property findPropertyById(long id) {
+        return propertyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Property not found with id: " + id));
+    }
+
+    private Property getPropertyForSaveOrUpdate(PropertyRequestDTO propertyRequestDTO) {
+        if (propertyRequestDTO.getPropertyId() != null) {
+            Property existingProperty = findPropertyById(propertyRequestDTO.getPropertyId());
+            propertyMapper.updatePropertyFromDto(propertyRequestDTO, existingProperty);
+            return existingProperty;
+        } else {
+            return propertyMapper.toEntity(propertyRequestDTO);
         }
     }
+
 }

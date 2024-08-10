@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class PropertyImages {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
+    @JsonIgnore
     private Property property;
     private String image;
 }

@@ -3,13 +3,18 @@ package com.realestate.backendrealestate.controllers;
 import com.realestate.backendrealestate.dtos.requests.PropertyRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PropertyResponseDTO;
 import com.realestate.backendrealestate.dtos.responses.ResponseDto;
+import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.services.PropertyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @Slf4j
 @RestController
@@ -19,10 +24,11 @@ public class PropertyController {
 
     private final PropertyService propertyService;
 
-    @PostMapping
-    public ResponseEntity<PropertyResponseDTO> saveOrUpdate(@RequestBody PropertyRequestDTO propertyRequestDTO) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PropertyResponseDTO> saveOrUpdate(@RequestPart("property") PropertyRequestDTO propertyRequestDTO,
+                                                            @RequestPart("images") List<MultipartFile> images) {
         log.info("Save Or Update Property");
-        return ResponseEntity.ok(propertyService.saveOrUpdate(propertyRequestDTO));
+        return ResponseEntity.ok(propertyService.saveOrUpdate(propertyRequestDTO, images, propertyRequestDTO.getPjServices()));
     }
 
     @GetMapping

@@ -3,11 +3,8 @@ package com.realestate.backendrealestate.dtos.responses;
 import com.realestate.backendrealestate.core.enums.PropertyStatus;
 import com.realestate.backendrealestate.core.enums.PropertyType;
 import com.realestate.backendrealestate.entities.PropertyImages;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import com.realestate.backendrealestate.entities.PropertyPjServices;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 public class PropertyResponseDTO{
     private Long propertyId;
     private String description;

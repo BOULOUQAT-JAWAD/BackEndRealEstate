@@ -12,7 +12,7 @@ public interface PropertyMapper {
 
     Property toEntity(PropertyRequestDTO propertyRequestDTO);
     PropertyResponseDTO toDto(Property property);
-    @Mapping(target = "id", ignore = true) // Ignore ID during update
+    @Mapping(target = "propertyId", ignore = true) // Ignore ID during update
     void updatePropertyFromDto(PropertyRequestDTO dto, @MappingTarget Property entity);
 
 }

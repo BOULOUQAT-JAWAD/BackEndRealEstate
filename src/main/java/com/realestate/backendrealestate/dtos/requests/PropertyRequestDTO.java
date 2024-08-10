@@ -2,7 +2,9 @@ package com.realestate.backendrealestate.dtos.requests;
 
 import com.realestate.backendrealestate.core.enums.PropertyStatus;
 import com.realestate.backendrealestate.core.enums.PropertyType;
+import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.entities.PropertyImages;
+import com.realestate.backendrealestate.entities.PropertyPjServices;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,9 +41,5 @@ public class PropertyRequestDTO {
     private double pricePerNight;
     @NotNull(message = "publish est requise")
     private boolean publish;
-
-    @NotNull(message = "Client est requis")
-    private Long clientId;
-
-    private List<MultipartFile> images;
+    private List<PjService> pjServices;
 }
