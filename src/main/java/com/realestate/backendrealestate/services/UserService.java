@@ -36,7 +36,8 @@ public class UserService {
     }
 
     public User findByToken(UserToken userToken) {
-        return userRepository.findByUserToken(userToken).orElseThrow(() -> {log.error("user not found");
+        return userRepository.findByUserTokenTokenAndUserTokenType(userToken.getToken(),userToken.getType())
+                .orElseThrow(() -> {log.error("user not found");
             return new RealEstateGlobalException("user not found");});
     }
 

@@ -23,6 +23,5 @@ public class SignUpRequestDto {
     @NotEmpty(message = "Field must not be empty.")
     private String password;
 
-    @NotEmpty(message = "Field must not be empty.")
     private Role role;
 }

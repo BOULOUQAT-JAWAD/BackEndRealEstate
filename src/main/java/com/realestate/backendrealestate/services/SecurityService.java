@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.UUID;
@@ -71,6 +72,7 @@ public class SecurityService {
         }
     }
 
+    @Transactional
     public DefaultResponseDto registerUser(SignUpRequestDto signUpRequestDto) {
         log.info("User sign-up request has been validated.");
         if (userService.checkUserByMail(signUpRequestDto.getEmail())) {
@@ -80,6 +82,9 @@ public class SecurityService {
         log.info("Creating a new user");
         User newUser = User
                 .builder()
+                .firstName(signUpRequestDto.getFirstName())
+                .lastName(signUpRequestDto.getLastName())
+                .phoneNumber(signUpRequestDto.getPhoneNumber())
                 .email(signUpRequestDto.getEmail())
                 .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
                 .role(signUpRequestDto.getRole())
@@ -100,6 +105,8 @@ public class SecurityService {
         return UUID.randomUUID().toString();
     }
 
+
+    @Transactional
     public AuthResponseDto activateUser(String tokenVerification) {
         UserToken userToken = UserToken.builder()
                 .token(tokenVerification)
@@ -143,4 +150,5 @@ public class SecurityService {
 
         }
     }
+
 }
