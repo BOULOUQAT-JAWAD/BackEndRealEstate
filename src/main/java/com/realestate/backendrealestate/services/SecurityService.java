@@ -151,4 +151,9 @@ public class SecurityService {
         }
     }
 
+
+    public static User getAuthenticatedUser(){
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
 }

@@ -18,7 +18,7 @@ public class ClientService {
     public Client getAuthenticatedClient(){
         try {
             return clientRepository.findByUser(
-                    AuthService.getAuthenticatedUser()
+                    SecurityService.getAuthenticatedUser()
             ).orElseThrow(
                     () -> new Exception("Client not found")
             );
