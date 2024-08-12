@@ -26,7 +26,7 @@ public class PropertyController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PropertyResponseDTO> saveOrUpdate(@RequestPart("property") PropertyRequestDTO propertyRequestDTO,
-                                                            @RequestPart("images") List<MultipartFile> images) {
+                                                            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         log.info("Save Or Update Property");
         return ResponseEntity.ok(propertyService.saveOrUpdate(propertyRequestDTO, images, propertyRequestDTO.getPjServices()));
     }

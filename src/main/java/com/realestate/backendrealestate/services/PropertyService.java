@@ -79,7 +79,7 @@ public class PropertyService {
             propertyImagesService.updatePropertyImages(savedProperty, images);
         }
 
-        return propertyMapper.toDto(savedProperty);
+        return get(savedProperty.getPropertyId());
     }
 
     @Transactional
