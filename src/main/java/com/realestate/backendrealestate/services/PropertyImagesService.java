@@ -26,7 +26,7 @@ public class PropertyImagesService {
         // Convert the incoming images to a list of their generated filenames for easier comparison
         List<String> newImageFilePaths = images.stream()
                 .map(image -> generateFilePath(property, image))
-                .collect(Collectors.toList());
+                .toList();
 
         // Handle image deletions
         existingImages.stream()

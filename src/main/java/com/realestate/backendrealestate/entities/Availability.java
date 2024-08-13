@@ -3,8 +3,8 @@ package com.realestate.backendrealestate.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class Availability {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long availabilityId;
-    private Date availableDay; //LUNDI & MARDI etc....
+    private LocalDate availableDay; //LUNDI & MARDI etc....
     private LocalTime startTime;
     private LocalTime endTime;
 

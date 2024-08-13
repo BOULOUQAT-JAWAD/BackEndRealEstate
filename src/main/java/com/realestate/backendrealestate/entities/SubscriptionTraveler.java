@@ -4,6 +4,7 @@ import com.realestate.backendrealestate.core.enums.SubscriptionType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -20,8 +21,8 @@ public class SubscriptionTraveler {
     @Enumerated(EnumType.STRING)
     private SubscriptionType subscriptionType;
     private double totalPrice;
-    private Date subsDate;
-    private Date endSubsDate;
+    private LocalDate subsDate;
+    private LocalDate endSubsDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "traveler_id")

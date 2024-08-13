@@ -5,6 +5,7 @@ import com.realestate.backendrealestate.core.enums.ServiceType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -33,7 +34,7 @@ public class ProviderInvoice {
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
-    private Date date;
+    private LocalDate date;
     private String rating;
     private String gain;
     @Enumerated(EnumType.STRING)

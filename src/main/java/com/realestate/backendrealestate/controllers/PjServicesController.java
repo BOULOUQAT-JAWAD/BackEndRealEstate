@@ -17,11 +17,5 @@ import java.util.List;
 @AllArgsConstructor
 public class PjServicesController {
 
-    private final PropertyService propertyService;
 
-    @GetMapping
-    public ResponseEntity<List<PropertyResponseDTO>> getAll() {
-        log.info("Getting Properties");
-        return ResponseEntity.ok(propertyService.getAll());
-    }
 }
