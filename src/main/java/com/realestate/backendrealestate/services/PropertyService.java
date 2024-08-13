@@ -7,6 +7,7 @@ import com.realestate.backendrealestate.mappers.PropertyMapper;
 import com.realestate.backendrealestate.repositories.ClientRepository;
 import com.realestate.backendrealestate.repositories.PropertyImagesRepository;
 import com.realestate.backendrealestate.repositories.PropertyRepository;
+import com.realestate.backendrealestate.repositories.ReservationRepository;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +33,7 @@ public class PropertyService {
     private final PropertyMapper propertyMapper;
     private final PropertyImagesService propertyImagesService;
     private final PropertyPjServicesService propertyPjServicesService;
+    private final ReservationRepository reservationRepository;
     private final ClientService clientService;
 
     public PropertyResponseDTO get(long propertyId) {
@@ -45,9 +51,10 @@ public class PropertyService {
         return dto;
     }
 
-    public List<PropertyResponseDTO> getAll() {
-        return propertyRepository.findAll().stream()
-                .map(property -> {
+    public List<PropertyResponseDTO> getClientProperties() {
+
+        return findPropertiesByClient().stream().map(
+                property -> {
                     // Fetch the images related to the property
                     List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
 
@@ -58,9 +65,61 @@ public class PropertyService {
                     dto.setPropertyImages(images);
 
                     return dto;
-                })
-                .toList();
+                }
+        ).toList();
+
     }
+
+    public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate) {
+        return getFilteredProperties(checkinDate, checkoutDate, true);
+    }
+
+    public List<PropertyResponseDTO> getClientAvailableProperties(LocalDate checkinDate, LocalDate checkoutDate) {
+        return getFilteredProperties(checkinDate, checkoutDate, false);
+    }
+
+    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean isOccupied) {
+        List<Property> properties = findPropertiesByClient();
+
+        List<Property> filteredProperties = properties.stream().filter(property -> {
+            List<Reservation> reservations = reservationRepository.findByProperty(property);
+
+            if (isOccupied) {
+                // Check if the property has any reservation overlapping with the given date range
+                return reservations.stream().anyMatch(reservation ->
+                        reservation.getCheckinDate().isBefore(checkoutDate) &&
+                                reservation.getCheckoutDate().isAfter(checkinDate)
+                );
+            } else {
+                // Check if the property has no reservations overlapping with the given date range
+                return reservations.stream().noneMatch(reservation ->
+                        reservation.getCheckinDate().isBefore(checkoutDate) &&
+                                reservation.getCheckoutDate().isAfter(checkinDate)
+                );
+            }
+        }).toList();
+
+        return filteredProperties.stream().map(
+                propertyMapper::toDto
+        ).toList();
+    }
+
+//    public List<PropertyResponseDTO> getAll() {
+//        return propertyRepository.findAll().stream()
+//                .map(property -> {
+//                    // Fetch the images related to the property
+//                    List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
+//
+//                    // Convert Property to PropertyResponseDTO
+//                    PropertyResponseDTO dto = propertyMapper.toDto(property);
+//
+//                    // Set the images in the DTO
+//                    dto.setPropertyImages(images);
+//
+//                    return dto;
+//                })
+//                .toList();
+//    }
 
     @Transactional
     public PropertyResponseDTO saveOrUpdate(@Valid PropertyRequestDTO propertyRequestDTO,
@@ -89,9 +148,15 @@ public class PropertyService {
         propertyRepository.deleteById(property.getPropertyId());
     }
 
-    private Property findPropertyById(long id) {
+    public Property findPropertyById(long id) {
         return propertyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Property not found with id: " + id));
+    }
+
+    public List<Property> findPropertiesByClient() {
+        Client client = clientService.getAuthenticatedClient();
+
+        return propertyRepository.findByClient(client);
     }
 
     private Property getPropertyForSaveOrUpdate(PropertyRequestDTO propertyRequestDTO) {
