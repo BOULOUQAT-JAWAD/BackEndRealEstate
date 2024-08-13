@@ -1,10 +1,10 @@
 package com.realestate.backendrealestate.controllers;
 
 
-import com.realestate.backendrealestate.dtos.request.AuthRequestDto;
-import com.realestate.backendrealestate.dtos.request.SignUpRequestDto;
-import com.realestate.backendrealestate.dtos.response.AuthResponseDto;
-import com.realestate.backendrealestate.dtos.response.DefaultResponseDto;
+import com.realestate.backendrealestate.dtos.requests.AuthRequestDto;
+import com.realestate.backendrealestate.dtos.requests.SignUpRequestDto;
+import com.realestate.backendrealestate.dtos.responses.AuthResponseDto;
+import com.realestate.backendrealestate.dtos.responses.DefaultResponseDto;
 import com.realestate.backendrealestate.services.SecurityService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

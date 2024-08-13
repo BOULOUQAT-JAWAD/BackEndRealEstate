@@ -1,17 +1,15 @@
 package com.realestate.backendrealestate.controllers.exceptionHandler;
 
 
-import com.realestate.backendrealestate.core.exception.BadRequestException;
 import com.realestate.backendrealestate.core.exception.InternalServerException;
 import com.realestate.backendrealestate.core.exception.RealEstateGlobalException;
-import com.realestate.backendrealestate.dtos.response.DefaultResponseDto;
+import com.realestate.backendrealestate.dtos.responses.DefaultResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Date;
 

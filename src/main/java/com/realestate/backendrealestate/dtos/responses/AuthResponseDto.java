@@ -1,4 +1,4 @@
-package com.realestate.backendrealestate.dtos.response;
+package com.realestate.backendrealestate.dtos.responses;
 
 
 import lombok.Builder;

@@ -1,9 +1,8 @@
-package com.realestate.backendrealestate.dtos.request;
+package com.realestate.backendrealestate.dtos.requests;
 
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 

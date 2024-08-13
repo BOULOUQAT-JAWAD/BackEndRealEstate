@@ -1,4 +1,4 @@
-package com.realestate.backendrealestate.dtos.request;
+package com.realestate.backendrealestate.dtos.requests;
 
 import com.realestate.backendrealestate.core.enums.Role;
 import jakarta.validation.constraints.Email;
