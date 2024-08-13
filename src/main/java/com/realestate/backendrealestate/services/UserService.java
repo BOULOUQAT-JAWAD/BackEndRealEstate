@@ -31,8 +31,8 @@ public class UserService {
         return userCredentialEntityOptional.isPresent();
     }
 
-    public void saveUser(User newUser) {
-        userRepository.save(newUser);
+    public User saveUser(User newUser) {
+        return userRepository.save(newUser);
     }
 
     public User findByToken(UserToken userToken) {

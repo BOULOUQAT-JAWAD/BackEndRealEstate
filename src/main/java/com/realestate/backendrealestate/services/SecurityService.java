@@ -7,6 +7,9 @@ import com.realestate.backendrealestate.dtos.request.AuthRequestDto;
 import com.realestate.backendrealestate.dtos.request.SignUpRequestDto;
 import com.realestate.backendrealestate.dtos.response.AuthResponseDto;
 import com.realestate.backendrealestate.dtos.response.DefaultResponseDto;
+import com.realestate.backendrealestate.entities.Client;
+import com.realestate.backendrealestate.entities.Provider;
+import com.realestate.backendrealestate.entities.Traveler;
 import com.realestate.backendrealestate.entities.User;
 import com.realestate.backendrealestate.entities.UserToken;
 import com.realestate.backendrealestate.security.jwt.JwtUtils;
@@ -38,6 +41,9 @@ public class SecurityService {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final ClientService clientService;
+    private final ProviderService providerService;
+    private final TravelerService travelerService;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
@@ -91,7 +97,21 @@ public class SecurityService {
                 .userToken(UserToken.builder().token(generateUserToken()).type(TokenType.ACTIVATION).build())
                 .activated(false)
                 .build();
-        userService.saveUser(newUser);
+        User savedUser = userService.saveUser(newUser);
+        switch (signUpRequestDto.getRole()) {
+            case CLIENT:
+                clientService.saveClient(Client.builder().user(savedUser).build());
+                break;
+            case TRAVELER:
+                travelerService.saveTraveler(Traveler.builder().user(savedUser).build());
+                break;
+            case PROVIDER:
+                providerService.saveProvider(Provider.builder().user(savedUser).build());
+                break;
+            default:
+                System.out.println("Not a valid day.");
+                break;
+        }
         log.info("Sending the user a verification link to his email!");
         mailService.send(newUser.getEmail(),"Verification Email", mailContentBuilder.build(verificationBaseUrl + newUser.getUserToken().getToken()));
 
