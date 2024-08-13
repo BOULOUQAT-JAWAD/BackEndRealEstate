@@ -28,4 +28,8 @@ public class ClientService {
             throw new RuntimeException(e);
         }
     }
+
+    public void saveClient(Client client){
+        clientRepository.save(client);
+    }
 }
