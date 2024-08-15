@@ -15,9 +15,11 @@ public class PjService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pjServiceId;
+
     private String title;
     private String description;
     private double price;
+
     @Enumerated(EnumType.STRING)
     private PjServiceType pjServiceType;
 }

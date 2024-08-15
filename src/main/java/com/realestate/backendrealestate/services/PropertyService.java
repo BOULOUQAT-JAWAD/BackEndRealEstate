@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.services;
 
+import com.realestate.backendrealestate.core.exception.NotFoundException;
 import com.realestate.backendrealestate.dtos.requests.PropertyRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PropertyResponseDTO;
 import com.realestate.backendrealestate.entities.*;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,36 +40,47 @@ public class PropertyService {
 
     public PropertyResponseDTO get(long propertyId) {
         Property property = findPropertyById(propertyId);
+        return convertPropertyToDTO(property);
+    }
 
+    public List<PropertyResponseDTO> getClientProperties() {
+        return findPropertiesByClient().stream()
+                .map(this::convertPropertyToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private PropertyResponseDTO convertPropertyToDTO(Property property) {
         // Fetch the images related to the property
         List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
 
         // Convert Property to PropertyResponseDTO
         PropertyResponseDTO dto = propertyMapper.toDto(property);
 
+        // Create deep copies of the PjService entities
+        /*
+        Proxies: When Hibernate loads an entity lazily, it creates a proxy object. This proxy acts as a placeholder for the actual entity and intercepts method calls to load the entity data when needed.
+        Problem with Proxies: When you try to serialize a proxied entity (e.g., converting it to JSON in a REST response), the serialization framework (like Jackson) may encounter issues. The proxy object may include fields or methods that are not fully initialized, leading to errors.
+	    •	Jackson and Hibernate Proxy: Jackson (the JSON serializer used by Spring Boot) doesn’t know how to handle these proxy objects. When it encounters them, it may throw an exception because it can’t properly serialize the proxy’s internal state.
+        Why the Deep Copy Solved the Problem:
+	    •	Creating a Deep Copy: By creating a deep copy of the PjService entities, you’re effectively creating new instances of the entities without any of the proxy behavior that Hibernate introduced.
+         */
+        List<PjService> pjServices = propertyPjServicesService.getPjServicesByProperty(property).stream()
+                .map(pjService -> PjService.builder()
+                        .pjServiceId(pjService.getPjServiceId())
+                        .title(pjService.getTitle())
+                        .description(pjService.getDescription())
+                        .price(pjService.getPrice())
+                        .pjServiceType(pjService.getPjServiceType())
+                        .build())
+                .collect(Collectors.toList());
+
+        // Set the deep copied PjServices in the DTO
+        dto.setPjServices(pjServices);
+
         // Set the images in the DTO
         dto.setPropertyImages(images);
 
         return dto;
-    }
-
-    public List<PropertyResponseDTO> getClientProperties() {
-
-        return findPropertiesByClient().stream().map(
-                property -> {
-                    // Fetch the images related to the property
-                    List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
-
-                    // Convert Property to PropertyResponseDTO
-                    PropertyResponseDTO dto = propertyMapper.toDto(property);
-
-                    // Set the images in the DTO
-                    dto.setPropertyImages(images);
-
-                    return dto;
-                }
-        ).toList();
-
     }
 
     public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate) {
@@ -99,9 +112,8 @@ public class PropertyService {
             }
         }).toList();
 
-        return filteredProperties.stream().map(
-                propertyMapper::toDto
-        ).toList();
+        return filteredProperties.stream().map(this::convertPropertyToDTO)
+                .collect(Collectors.toList());
     }
 
 //    public List<PropertyResponseDTO> getAll() {
@@ -150,7 +162,7 @@ public class PropertyService {
 
     public Property findPropertyById(long id) {
         return propertyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Property not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Property not found with id: " + id));
     }
 
     public List<Property> findPropertiesByClient() {

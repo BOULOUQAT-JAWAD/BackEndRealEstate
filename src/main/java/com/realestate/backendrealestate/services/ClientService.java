@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.services;
 
+import com.realestate.backendrealestate.core.exception.NotFoundException;
 import com.realestate.backendrealestate.entities.Client;
 import com.realestate.backendrealestate.repositories.ClientRepository;
 import com.realestate.backendrealestate.repositories.UserRepository;
@@ -25,7 +26,7 @@ public class ClientService {
             return clientRepository.findByUser(
                     securityService.getAuthenticatedUser()
             ).orElseThrow(
-                    () -> new Exception("Client not found")
+                    () -> new NotFoundException("Client not found")
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

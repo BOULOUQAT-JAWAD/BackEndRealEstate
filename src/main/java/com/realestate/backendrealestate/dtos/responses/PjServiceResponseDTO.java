@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PjServiceResponseDTO {
-
+    private Long pjServiceId;
     private String title;
     private String description;
     private double price;

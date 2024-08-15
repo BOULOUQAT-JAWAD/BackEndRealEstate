@@ -19,7 +19,8 @@ import java.util.List;
 public class PropertyPjServicesService {
 
     private final PropertyPjServicesRepository propertyPjServicesRepository;
-    private final PjServiceRepository pjServiceRepository; // Assuming this repository exists
+    private final PjServiceRepository pjServiceRepository;
+    private final PjServicesService pjServicesService;
 
     @Transactional
     public void updatePropertyServices(Property property, List<PjService> pjServices) {
@@ -50,5 +51,17 @@ public class PropertyPjServicesService {
                 propertyPjServicesRepository.save(propertyPjServices);
             }
         }
+    }
+
+    public List<PjService> getPjServicesByProperty(Property property){
+        List<PropertyPjServices> propertyPjServices = propertyPjServicesRepository.findAllByProperty(property);
+        List<PjService> pjServices = new java.util.ArrayList<>(List.of());
+
+        propertyPjServices.forEach(
+                propertyPjService -> {
+                    pjServices.add(pjServicesService.get(propertyPjService.getPjService().getPjServiceId()));
+                }
+        );
+        return pjServices;
     }
 }

@@ -2,6 +2,7 @@ package com.realestate.backendrealestate.dtos.responses;
 
 import com.realestate.backendrealestate.core.enums.PropertyStatus;
 import com.realestate.backendrealestate.core.enums.PropertyType;
+import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.entities.PropertyImages;
 import lombok.*;
 
@@ -28,4 +29,5 @@ public class PropertyResponseDTO{
     private double pricePerNight;
     private boolean publish;
     private List<PropertyImages> propertyImages;
+    private List<PjService> pjServices;
 }
