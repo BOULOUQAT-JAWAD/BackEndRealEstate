@@ -2,6 +2,8 @@ package com.realestate.backendrealestate.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -9,40 +11,59 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Service
 public class FileService {
-    public static String generateFilePath(MultipartFile file, String fileName, String directoryName) {
+
+    @Value("${app.domain.name}")
+    private String domainName;
+
+    @Value("${images.folder}")
+    private String directoryName;
+
+    private static final String IMAGES_PATH = "/images/";
+
+    public String generateFileName(MultipartFile file, String fileName) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String fileFullName = fileName + "_" + now.format(formatter);
 
-        File directory = new File(directoryName);
-        String absolutePath = directory.getAbsolutePath();
-
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        return absolutePath + "\\" + fileFullName + "." + fileExtension;
+        return fileFullName + "." + fileExtension;
     }
 
-    public static String saveFile(MultipartFile file, String fileName, String directoryName) {
-        String filePath = generateFilePath(file, fileName, directoryName);
+    public String saveFile(MultipartFile file, String fileName) {
+        File directory = new File(directoryName);
+
+        // Check if the directory exists
+        if (!directory.exists() || !directory.isDirectory()) {
+            throw new RuntimeException("Directory does not exist: " + directoryName);
+        }
+
+        String generatedFileName = generateFileName(file, fileName);
+        String filePath = directory.getAbsolutePath() + File.separator + generatedFileName;
+
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to save file: " + e.getMessage(), e);
         }
-        return filePath;
+
+        // Return the URL of the saved file
+        return domainName + IMAGES_PATH + generatedFileName;
     }
 
-    public static String updateFile(MultipartFile newFile, String fileName, String directoryName, String oldFilePath) {
-        if (oldFilePath!=null){
-            File oldFile = new File(oldFilePath);
-            if (oldFile.exists())
-                FileUtils.deleteQuietly(new File(oldFilePath));
+    public String updateFile(MultipartFile newFile, String fileName, String oldFilePath) {
+        if (oldFilePath != null) {
+            File oldFile = new File(directoryName, new File(oldFilePath).getName());
+            if (oldFile.exists()) {
+                FileUtils.deleteQuietly(oldFile);
+            }
         }
-        return saveFile(newFile, fileName, directoryName);
+        return saveFile(newFile, fileName);
     }
 
-    public static boolean deleteFile(String filePath, String directoryName) {
-        File file = new File(directoryName, filePath);
+    public boolean deleteFile(String filePath) {
+        File file = new File(directoryName, new File(filePath).getName());
         if (file.exists()) {
             return file.delete();
         } else {
