@@ -21,7 +21,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping("")
+    @GetMapping("/property")
     public ResponseEntity<List<ReservationResponseDTO>> getPropertyReservations(
             @RequestParam Long propertyId,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
@@ -29,6 +29,17 @@ public class ReservationController {
             @RequestParam(required = false) ReservationStatus status) {
 
         List<ReservationResponseDTO> reservations = reservationService.getPropertyReservations(propertyId, checkinDate, checkoutDate, status);
+
+        return ResponseEntity.ok(reservations);
+    }
+
+    @GetMapping("/client")
+    public ResponseEntity<List<ReservationResponseDTO>> getClientReservations(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate,
+            @RequestParam(required = false) ReservationStatus status) {
+
+        List<ReservationResponseDTO> reservations = reservationService.getClientReservations(checkinDate, checkoutDate, status);
 
         return ResponseEntity.ok(reservations);
     }

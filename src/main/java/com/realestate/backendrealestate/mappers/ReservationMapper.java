@@ -11,4 +11,5 @@ public interface ReservationMapper {
     @Mapping(source = "property.propertyId", target = "propertyId")
     ReservationResponseDTO toDto(Reservation reservation);
 
+    Reservation toEntity(ReservationResponseDTO reservationResponseDTO);
 }

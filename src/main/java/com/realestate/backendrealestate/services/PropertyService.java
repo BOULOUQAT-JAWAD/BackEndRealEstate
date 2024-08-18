@@ -91,13 +91,13 @@ public class PropertyService {
         return getFilteredProperties(checkinDate, checkoutDate, false);
     }
 
-    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean isOccupied) {
+    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied) {
         List<Property> properties = findPropertiesByClient();
 
         List<Property> filteredProperties = properties.stream().filter(property -> {
             List<Reservation> reservations = reservationRepository.findByProperty(property);
 
-            if (isOccupied) {
+            if (forOccupied) {
                 // Check if the property has any reservation overlapping with the given date range
                 return reservations.stream().anyMatch(reservation ->
                         reservation.getCheckinDate().isBefore(checkoutDate) &&

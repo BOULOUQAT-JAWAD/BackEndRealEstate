@@ -24,7 +24,7 @@ public class ReservationInvoice {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    private double total;
-    private double discount;
-    private ReservationStatus status;
+//    private double total;
+//    private double discount;
+//    private ReservationStatus status;
 }
