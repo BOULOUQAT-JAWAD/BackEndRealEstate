@@ -2,6 +2,7 @@ package com.realestate.backendrealestate.controllers;
 
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
 import com.realestate.backendrealestate.dtos.requests.SubsClientRequest;
+import com.realestate.backendrealestate.dtos.responses.DefaultResponseDto;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.services.SubscriptionClientService;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,8 @@ public class SubscriptionClientController {
 
     private final SubscriptionClientService subscriptionClientService;
 
-    @GetMapping("")
-    public ResponseEntity<List<ReservationResponseDTO>> subscribe(@RequestBody SubsClientRequest subsClientRequest) {
-        subscriptionClientService.subscribeClient(subsClientRequest);
+    @PostMapping
+    public ResponseEntity<DefaultResponseDto> subscribe() {
+         return ResponseEntity.ok(subscriptionClientService.subscribeClient());
     }
 }
