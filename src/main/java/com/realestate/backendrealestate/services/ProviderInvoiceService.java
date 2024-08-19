@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,14 +29,16 @@ public class ProviderInvoiceService {
     private final PropertyService propertyService;
     private final ProviderInvoiceMapper providerInvoiceMapper;
 
-    public List<ProviderInvoiceResponseDTO> getClientReservationsServices() {
+    public List<ProviderInvoiceResponseDTO> getClientReservationsServices(LocalDate startDate, LocalDate endDate) {
         List<ReservationResponseDTO> reservationResponseDTOS = reservationService.getClientReservations();
         List<ProviderInvoice> providerInvoices = new java.util.ArrayList<>();
 
         reservationResponseDTOS.forEach(reservationResponseDTO -> {
-            List<ProviderInvoice> invoices = providerInvoiceRepository.findByServiceTypeAndReservation(
+            List<ProviderInvoice> invoices = providerInvoiceRepository.findByServiceTypeAndReservationAndDateBetween(
                     ServiceType.reservation,
-                    reservationMapper.toEntity(reservationResponseDTO)
+                    reservationMapper.toEntity(reservationResponseDTO),
+                    startDate,
+                    endDate
             );
             invoices.forEach(invoice -> providerInvoices.add(invoice.deepCopy())); // Add deep copy
         });
@@ -45,14 +48,16 @@ public class ProviderInvoiceService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProviderInvoiceResponseDTO> getClientPropertiesServices() {
+    public List<ProviderInvoiceResponseDTO> getClientPropertiesServices(LocalDate startDate, LocalDate endDate) {
         List<Property> properties = propertyService.findPropertiesByClient();
         List<ProviderInvoice> providerInvoices = new java.util.ArrayList<>();
 
         properties.forEach(property -> {
-            List<ProviderInvoice> invoices = providerInvoiceRepository.findByServiceTypeAndProperty(
+            List<ProviderInvoice> invoices = providerInvoiceRepository.findByServiceTypeAndPropertyAndDateBetween(
                     ServiceType.property,
-                    property
+                    property,
+                    startDate,
+                    endDate
             );
             invoices.forEach(invoice -> providerInvoices.add(invoice.deepCopy())); // Add deep copy
         });

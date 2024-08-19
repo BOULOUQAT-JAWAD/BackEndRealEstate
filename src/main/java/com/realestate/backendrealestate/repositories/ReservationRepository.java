@@ -32,4 +32,14 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
                                                @Param("checkinDate") LocalDate checkinDate,
                                                @Param("checkoutDate") LocalDate checkoutDate,
                                                @Param("status") ReservationStatus status);
+
+    @Query("SELECT r FROM Reservation r WHERE " +
+            "(r.property.id = :propertyId) AND " +
+            "(COALESCE(:checkinDate, NULL) IS NULL OR r.checkinDate >= :checkinDate) AND " +
+            "(COALESCE(:checkoutDate, NULL) IS NULL OR r.checkoutDate <= :checkoutDate) AND " +
+            "(COALESCE(:status, NULL) IS NULL OR r.status = :status)")
+    List<Reservation> findFilteredReservationsDateRange(@Param("propertyId") Long propertyId,
+                                               @Param("checkinDate") LocalDate checkinDate,
+                                               @Param("checkoutDate") LocalDate checkoutDate,
+                                               @Param("status") ReservationStatus status);
 }

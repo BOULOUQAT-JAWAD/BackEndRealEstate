@@ -38,9 +38,11 @@ public class PropertyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PropertyResponseDTO>> getClientProperties() {
+    public ResponseEntity<List<PropertyResponseDTO>> getClientProperties(
+            @RequestParam(value = "publish", required = false) boolean publish
+    ) {
         log.info("Getting Properties");
-        return ResponseEntity.ok(propertyService.getClientProperties());
+        return ResponseEntity.ok(propertyService.getClientProperties(publish));
     }
 
     @GetMapping("/{propertyId}")

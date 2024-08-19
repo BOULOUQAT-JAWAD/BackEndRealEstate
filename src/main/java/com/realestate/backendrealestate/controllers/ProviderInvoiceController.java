@@ -26,12 +26,17 @@ public class ProviderInvoiceController {
     private final ProviderInvoiceService providerInvoiceService;
 
     @GetMapping("/reservations/client")
-    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getClientReservationsServices() {
-        return ResponseEntity.ok(providerInvoiceService.getClientReservationsServices());
+    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getClientReservationsServices(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+    ) {
+        return ResponseEntity.ok(providerInvoiceService.getClientReservationsServices(startDate,endDate));
     }
 
     @GetMapping("/properties/client")
-    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getClientPropertiesServices() {
-        return ResponseEntity.ok(providerInvoiceService.getClientPropertiesServices());
+    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getClientPropertiesServices(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+        return ResponseEntity.ok(providerInvoiceService.getClientPropertiesServices(startDate,endDate));
     }
 }

@@ -43,4 +43,15 @@ public class ReservationController {
 
         return ResponseEntity.ok(reservations);
     }
+
+    @GetMapping("/client/income")
+    public ResponseEntity<List<ReservationResponseDTO>> getClientReservationsDateRange(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate,
+            @RequestParam(required = false) ReservationStatus status) {
+
+        List<ReservationResponseDTO> reservations = reservationService.getClientReservationsDateRange(checkinDate, checkoutDate, status);
+
+        return ResponseEntity.ok(reservations);
+    }
 }

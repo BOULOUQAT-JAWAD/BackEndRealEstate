@@ -43,8 +43,9 @@ public class PropertyService {
         return convertPropertyToDTO(property);
     }
 
-    public List<PropertyResponseDTO> getClientProperties() {
+    public List<PropertyResponseDTO> getClientProperties(boolean publish) {
         return findPropertiesByClient().stream()
+                .filter(property -> property.isPublish() == publish)
                 .map(this::convertPropertyToDTO)
                 .collect(Collectors.toList());
     }

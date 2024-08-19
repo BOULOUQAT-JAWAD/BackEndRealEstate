@@ -7,12 +7,21 @@ import com.realestate.backendrealestate.entities.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice,Long> {
 
-    List<ProviderInvoice> findByServiceTypeAndReservation(ServiceType serviceType, Reservation reservation);
+    List<ProviderInvoice> findByServiceTypeAndReservationAndDateBetween(
+            ServiceType serviceType,
+            Reservation reservation,
+            LocalDate startDate,
+            LocalDate endDate);
 
-    List<ProviderInvoice> findByServiceTypeAndProperty(ServiceType serviceType, Property property);
+    List<ProviderInvoice> findByServiceTypeAndPropertyAndDateBetween(
+            ServiceType serviceType,
+            Property property,
+            LocalDate startDate,
+            LocalDate endDate);
 }
