@@ -38,14 +38,21 @@ public class PropertyService {
     private final ReservationRepository reservationRepository;
     private final ClientService clientService;
 
+    public PropertyResponseDTO validateProperty(long propertyId) {
+        Property property = findPropertyById(propertyId);
+        property.setValid(true);
+        Property newProperty = propertyRepository.save(property);
+        return convertPropertyToDTO(newProperty);
+    }
+
     public PropertyResponseDTO get(long propertyId) {
         Property property = findPropertyById(propertyId);
         return convertPropertyToDTO(property);
     }
 
-    public List<PropertyResponseDTO> getClientProperties(boolean publish) {
+    public List<PropertyResponseDTO> getClientProperties(boolean publish, boolean valid) {
         return findPropertiesByClient().stream()
-                .filter(property -> property.isPublish() == publish)
+                .filter(property -> property.isPublish() == publish && property.isValid() == valid)
                 .map(this::convertPropertyToDTO)
                 .collect(Collectors.toList());
     }
@@ -84,16 +91,16 @@ public class PropertyService {
         return dto;
     }
 
-    public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate) {
-        return getFilteredProperties(checkinDate, checkoutDate, true);
+    public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean publish, boolean valid) {
+        return getFilteredProperties(checkinDate, checkoutDate, true, publish, valid);
     }
 
-    public List<PropertyResponseDTO> getClientAvailableProperties(LocalDate checkinDate, LocalDate checkoutDate) {
-        return getFilteredProperties(checkinDate, checkoutDate, false);
+    public List<PropertyResponseDTO> getClientAvailableProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean publish, boolean valid) {
+        return getFilteredProperties(checkinDate, checkoutDate, false, publish, valid);
     }
 
-    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied) {
-        List<Property> properties = findPropertiesByClient();
+    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied, boolean publish, boolean valid) {
+        List<Property> properties = findPropertiesByClient(publish, valid);
 
         List<Property> filteredProperties = properties.stream().filter(property -> {
             List<Reservation> reservations = reservationRepository.findByProperty(property);
@@ -170,6 +177,12 @@ public class PropertyService {
         Client client = clientService.getAuthenticatedClient();
 
         return propertyRepository.findByClient(client);
+    }
+
+    public List<Property> findPropertiesByClient(boolean publish, boolean valid) {
+        Client client = clientService.getAuthenticatedClient();
+
+        return propertyRepository.findByClientAndPublishAndValid(client, publish, valid);
     }
 
     private Property getPropertyForSaveOrUpdate(PropertyRequestDTO propertyRequestDTO) {

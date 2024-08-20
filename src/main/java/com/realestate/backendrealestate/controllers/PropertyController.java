@@ -39,10 +39,11 @@ public class PropertyController {
 
     @GetMapping
     public ResponseEntity<List<PropertyResponseDTO>> getClientProperties(
-            @RequestParam(value = "publish", required = false) boolean publish
+            @RequestParam(value = "publish", required = false) boolean publish,
+            @RequestParam(value = "valid", required = false) boolean valid
     ) {
         log.info("Getting Properties");
-        return ResponseEntity.ok(propertyService.getClientProperties(publish));
+        return ResponseEntity.ok(propertyService.getClientProperties(publish, valid));
     }
 
     @GetMapping("/{propertyId}")
@@ -51,22 +52,32 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.get(propertyId));
     }
 
+    // Only Pj Admin can call it
+    @GetMapping("/{propertyId}/validate")
+    public ResponseEntity<PropertyResponseDTO> validateProperty(@PathVariable Long propertyId) {
+        return ResponseEntity.ok(propertyService.validateProperty(propertyId));
+    }
+
     @GetMapping("/occupied")
     public ResponseEntity<List<PropertyResponseDTO>> getClientOccupiedProperties(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(value = "publish", required = false) boolean publish,
+            @RequestParam(value = "valid", required = false) boolean valid) {
 
         log.info("Getting Client's occupied properties : between {} and {} ", startDate, endDate);
-        return ResponseEntity.ok(propertyService.getClientOccupiedProperties(startDate, endDate));
+        return ResponseEntity.ok(propertyService.getClientOccupiedProperties(startDate, endDate, publish, valid));
     }
 
     @GetMapping("/available")
     public ResponseEntity<List<PropertyResponseDTO>> getClientAvailableProperties(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(value = "publish", required = false) boolean publish,
+            @RequestParam(value = "valid", required = false) boolean valid) {
 
         log.info("Getting Client's available properties : between {} and {} ", startDate, endDate);
-        return ResponseEntity.ok(propertyService.getClientAvailableProperties(startDate, endDate));
+        return ResponseEntity.ok(propertyService.getClientAvailableProperties(startDate, endDate, publish, valid));
     }
 
     @DeleteMapping("/{propertyId}")

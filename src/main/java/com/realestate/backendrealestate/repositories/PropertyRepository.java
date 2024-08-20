@@ -11,4 +11,5 @@ import java.util.List;
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     List<Property> findByClient(Client client);
+    List<Property> findByClientAndPublishAndValid(Client client, boolean publish, boolean valid);
 }

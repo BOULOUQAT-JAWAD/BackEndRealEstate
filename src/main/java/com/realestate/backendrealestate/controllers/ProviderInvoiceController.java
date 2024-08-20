@@ -1,6 +1,8 @@
 package com.realestate.backendrealestate.controllers;
 
+import com.realestate.backendrealestate.core.enums.ProviderServiceStatus;
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
+import com.realestate.backendrealestate.core.enums.ServiceType;
 import com.realestate.backendrealestate.dtos.responses.ProviderInvoiceResponseDTO;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.entities.ProviderInvoice;
@@ -27,16 +29,18 @@ public class ProviderInvoiceController {
 
     @GetMapping("/reservations/client")
     public ResponseEntity<List<ProviderInvoiceResponseDTO>> getClientReservationsServices(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) ProviderServiceStatus status
     ) {
-        return ResponseEntity.ok(providerInvoiceService.getClientReservationsServices(startDate,endDate));
+        return ResponseEntity.ok(providerInvoiceService.getFilteredInvoices(ServiceType.reservation,status,startDate,endDate));
     }
 
     @GetMapping("/properties/client")
     public ResponseEntity<List<ProviderInvoiceResponseDTO>> getClientPropertiesServices(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
-        return ResponseEntity.ok(providerInvoiceService.getClientPropertiesServices(startDate,endDate));
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) ProviderServiceStatus status) {
+        return ResponseEntity.ok(providerInvoiceService.getFilteredInvoices(ServiceType.property,status,startDate,endDate));
     }
 }

@@ -28,6 +28,7 @@ public class PropertyResponseDTO{
     private LocalDate occupiedTo;
     private double pricePerNight;
     private boolean publish;
+    private boolean valid;
     private List<PropertyImages> propertyImages;
     private List<PjService> pjServices;
 }
