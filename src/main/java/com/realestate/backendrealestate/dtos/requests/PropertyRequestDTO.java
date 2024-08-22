@@ -2,15 +2,11 @@ package com.realestate.backendrealestate.dtos.requests;
 
 import com.realestate.backendrealestate.core.enums.PropertyStatus;
 import com.realestate.backendrealestate.core.enums.PropertyType;
-import com.realestate.backendrealestate.entities.PjService;
-import com.realestate.backendrealestate.entities.PropertyImages;
-import com.realestate.backendrealestate.entities.PropertyPjServices;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -41,5 +37,5 @@ public class PropertyRequestDTO {
     private double pricePerNight;
     @NotNull(message = "publish est requise")
     private boolean publish;
-    private List<PjService> pjServices;
+    private List<String> propertyImages;
 }

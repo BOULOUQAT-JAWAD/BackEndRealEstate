@@ -24,7 +24,7 @@ public class FileService {
 
     public String generateFileName(MultipartFile file, String fileName) {
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String fileFullName = fileName + "_" + now.format(formatter);
 
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());

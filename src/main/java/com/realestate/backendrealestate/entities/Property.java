@@ -45,8 +45,12 @@ public class Property {
     private List<PropertyPjServices> propertyPjServices;
 
     //List of Property Images
-    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<PropertyImages> propertyImages;
+//    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<PropertyImages> propertyImages;
+//
+
+    //List of Property Images
+    private List<String> propertyImages;
 
     @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Reservation> reservations;
