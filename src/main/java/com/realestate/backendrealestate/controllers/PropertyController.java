@@ -39,8 +39,8 @@ public class PropertyController {
 
     @GetMapping
     public ResponseEntity<List<PropertyResponseDTO>> getClientProperties(
-            @RequestParam(value = "publish", required = false) boolean publish,
-            @RequestParam(value = "valid", required = false) boolean valid
+            @RequestParam(value = "publish", required = false) Boolean publish,
+            @RequestParam(value = "valid", required = false) Boolean valid
     ) {
         log.info("Getting Properties");
         return ResponseEntity.ok(propertyService.getClientProperties(publish, valid));

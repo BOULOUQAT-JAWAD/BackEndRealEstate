@@ -50,9 +50,9 @@ public class PropertyService {
         return convertPropertyToDTO(property);
     }
 
-    public List<PropertyResponseDTO> getClientProperties(boolean publish, boolean valid) {
-        return findPropertiesByClient().stream()
-                .filter(property -> property.isPublish() == publish && property.isValid() == valid)
+    public List<PropertyResponseDTO> getClientProperties(Boolean publish, Boolean valid) {
+        log.info("getClientProperties publish {} , valid {} ", publish, valid);
+        return propertyRepository.findFilteredProperties(clientService.getAuthenticatedClient(), publish, valid).stream()
                 .map(this::convertPropertyToDTO)
                 .collect(Collectors.toList());
     }
@@ -91,15 +91,15 @@ public class PropertyService {
         return dto;
     }
 
-    public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean publish, boolean valid) {
+    public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate, Boolean publish, Boolean valid) {
         return getFilteredProperties(checkinDate, checkoutDate, true, publish, valid);
     }
 
-    public List<PropertyResponseDTO> getClientAvailableProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean publish, boolean valid) {
+    public List<PropertyResponseDTO> getClientAvailableProperties(LocalDate checkinDate, LocalDate checkoutDate, Boolean publish, Boolean valid) {
         return getFilteredProperties(checkinDate, checkoutDate, false, publish, valid);
     }
 
-    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied, boolean publish, boolean valid) {
+    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied, Boolean publish, Boolean valid) {
         List<Property> properties = findPropertiesByClient(publish, valid);
 
         List<Property> filteredProperties = properties.stream().filter(property -> {
