@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.enums.PjServiceType;
+import com.realestate.backendrealestate.core.exception.NotFoundException;
 import com.realestate.backendrealestate.dtos.responses.PjServiceResponseDTO;
 import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.mappers.PjServiceMapper;
@@ -48,5 +49,14 @@ public class PjServicesService {
              return defaultClientAnnualSubscription;
         }
         return pjServiceOptional.get().getPrice();
+    }
+
+    public double getPjServicePrice(Long pjServiceId){
+        return getPjServiceById(pjServiceId).getPrice();
+    }
+    public PjService getPjServiceById(Long pjServiceId){
+        PjService pjService = pjServiceRepository.findById(pjServiceId).orElseThrow(()-> new NotFoundException("PjService with id "+pjServiceId+" does not exist"));
+        log.info(String.valueOf(pjService));
+        return pjService;
     }
 }

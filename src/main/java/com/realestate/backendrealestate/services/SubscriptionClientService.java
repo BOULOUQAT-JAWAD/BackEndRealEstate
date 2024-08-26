@@ -2,7 +2,6 @@ package com.realestate.backendrealestate.services;
 
 
 import com.realestate.backendrealestate.core.exception.BadRequestException;
-import com.realestate.backendrealestate.dtos.responses.DefaultResponseDto;
 import com.realestate.backendrealestate.entities.Client;
 import com.realestate.backendrealestate.entities.SubscriptionClient;
 import com.realestate.backendrealestate.repositories.SubscriptionClientRepository;
@@ -24,8 +23,8 @@ public class SubscriptionClientService {
 
 
     @Transactional
-    public DefaultResponseDto subscribeClient() {
-        Client client = clientService.getAuthenticatedClient();
+    public void subscribeClient(String clientEmail, String subscriptionId) {
+        Client client = clientService.getClientByEmail(clientEmail);
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusDays(365);
         if (isSubscribed(client)){
@@ -34,15 +33,13 @@ public class SubscriptionClientService {
         log.info("Subscribing to client " + client.getClientId() + " with startDate " + startDate);
         double subscriptionPrice = pjServicesService.getAnnualClientSubscriptionPrice();
         SubscriptionClient subscriptionClient = SubscriptionClient.builder()
+                .subscriptionClientId(subscriptionId)
                 .client(client)
                 .annualPrice(subscriptionPrice)
                 .subsDate(startDate)
                 .endSubsDate(endDate)
                 .build();
         subscriptionClientRepository.save(subscriptionClient);
-
-
-        return null;
     }
 
     public boolean isSubscribed(Client client) {

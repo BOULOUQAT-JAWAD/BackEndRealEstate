@@ -65,6 +65,7 @@ public class SecurityService {
             log.info("User with email {} is authenticated ", user.getUsername());
             User userInfo = userService.getUserByEmail(user.getUsername());
             return AuthResponseDto.builder()
+                    .userId(userInfo.getUserId())
                     .email(user.getUsername())
                     .firstName(userInfo.getFirstName())
                     .lastName(userInfo.getLastName())

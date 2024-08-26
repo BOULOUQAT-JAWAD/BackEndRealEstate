@@ -10,6 +10,7 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
+@ToString
 public class PjService {
 
     @Id

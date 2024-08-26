@@ -32,12 +32,18 @@ public class ProviderInvoice {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pjService_id")
+    private PjService pjService;
+
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
     private LocalDate date;
     private String rating;
     private String gain;
     @Enumerated(EnumType.STRING)
+    @Column(length = 255)
     private ProviderServiceType status;
+    private String stripePaymentId;
 
 }

@@ -39,9 +39,11 @@ public class SecurityConfig {
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests((requests) -> requests
+//                        .requestMatchers("/api/auth/**","/api/properties","/api/payment/**","/webhook").permitAll()
+//                        .anyRequest().authenticated()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/auth/**","/api/properties","/api/payment/**").permitAll()
-                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 );
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
@@ -57,6 +59,6 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-}
+    }
 
 }

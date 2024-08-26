@@ -33,4 +33,8 @@ public class ClientService {
     public void saveClient(Client client){
         clientRepository.save(client);
     }
+
+    public Client getClientByEmail(String email){
+        return clientRepository.findByUserEmail(email).orElseThrow( () -> new NotFoundException("Client not found"));
+    }
 }
