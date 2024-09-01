@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.exception.NotFoundException;
+import com.realestate.backendrealestate.dtos.requests.PropertyFilterDTO;
 import com.realestate.backendrealestate.dtos.requests.PropertyRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PropertyResponseDTO;
 import com.realestate.backendrealestate.entities.*;
@@ -78,15 +79,16 @@ public class PropertyService {
     }
 
     public List<PropertyResponseDTO> getClientOccupiedProperties(LocalDate checkinDate, LocalDate checkoutDate, Boolean publish, Boolean valid) {
-        return getFilteredProperties(checkinDate, checkoutDate, true, publish, valid);
+        List<Property> properties = findPropertiesByClient(publish, valid);
+        return getFilteredProperties(properties, checkinDate, checkoutDate, true);
     }
 
     public List<PropertyResponseDTO> getClientAvailableProperties(LocalDate checkinDate, LocalDate checkoutDate, Boolean publish, Boolean valid) {
-        return getFilteredProperties(checkinDate, checkoutDate, false, publish, valid);
+        List<Property> properties = findPropertiesByClient(publish, valid);
+        return getFilteredProperties(properties, checkinDate, checkoutDate, false);
     }
 
-    private List<PropertyResponseDTO> getFilteredProperties(LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied, Boolean publish, Boolean valid) {
-        List<Property> properties = findPropertiesByClient(publish, valid);
+    private List<PropertyResponseDTO> getFilteredProperties(List<Property> properties, LocalDate checkinDate, LocalDate checkoutDate, boolean forOccupied) {
 
         List<Property> filteredProperties = properties.stream().filter(property -> {
             List<Reservation> reservations = reservationRepository.findByProperty(property);
@@ -110,22 +112,26 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-//    public List<PropertyResponseDTO> getAll() {
-//        return propertyRepository.findAll().stream()
-//                .map(property -> {
-//                    // Fetch the images related to the property
-//                    List<PropertyImages> images = propertyImagesRepository.findByProperty(property);
-//
-//                    // Convert Property to PropertyResponseDTO
-//                    PropertyResponseDTO dto = propertyMapper.toDto(property);
-//
-//                    // Set the images in the DTO
-//                    dto.setPropertyImages(images);
-//
-//                    return dto;
-//                })
-//                .toList();
-//    }
+    public List<PropertyResponseDTO> getAll(PropertyFilterDTO criteria, LocalDate checkinDate, LocalDate checkoutDate) {
+        String description = (criteria.getDescription() == null || criteria.getDescription().isEmpty()) ? null : "%" + criteria.getDescription().toLowerCase() + "%";
+        String country = (criteria.getCountry() == null || criteria.getCountry().isEmpty()) ? null : "%" + criteria.getCountry().toLowerCase() + "%";
+        String city = (criteria.getCity() == null || criteria.getCity().isEmpty()) ? null : "%" + criteria.getCity().toLowerCase() + "%";
+        List<Property> properties = propertyRepository.findFilteredProperties(
+                        description,
+                        country,
+                        city,
+                        criteria.getPropertyType(),
+                        criteria.getNumberOfRooms(),
+                        criteria.getNumberOfPersons(),
+                        criteria.getSurface(),
+                        criteria.getPricePerNight()
+                ).stream()
+                .toList();
+        if(checkinDate != null && checkoutDate != null){
+             return getFilteredProperties(properties, checkinDate, checkoutDate, false);
+        }
+        return properties.stream().map(propertyMapper::toDto).toList();
+    }
 
     @Transactional
     public PropertyResponseDTO saveOrUpdate(@Valid PropertyRequestDTO propertyRequestDTO) {
@@ -147,7 +153,7 @@ public class PropertyService {
         return propertyRepository.findByClient(client);
     }
 
-    public List<Property> findPropertiesByClient(boolean publish, boolean valid) {
+    public List<Property> findPropertiesByClient(boolean publish, Boolean valid) {
         Client client = clientService.getAuthenticatedClient();
 
         return propertyRepository.findByClientAndPublishAndValid(client, publish, valid);

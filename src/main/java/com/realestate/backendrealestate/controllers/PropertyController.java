@@ -1,11 +1,11 @@
 package com.realestate.backendrealestate.controllers;
 
+import com.realestate.backendrealestate.dtos.requests.PropertyFilterDTO;
 import com.realestate.backendrealestate.dtos.requests.PropertyRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PropertyResponseDTO;
 import com.realestate.backendrealestate.services.PropertyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +27,20 @@ public class PropertyController {
         log.info("Save Or Update Property");
         return ResponseEntity.ok(propertyService.saveOrUpdate(propertyRequestDTO));
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<PropertyResponseDTO>> getAll(
+            @ModelAttribute PropertyFilterDTO criteria,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate
+    ) {
+        log.info("Getting All Properties");
+        if(criteria == null){
+            return ResponseEntity.ok(propertyService.getAll(new PropertyFilterDTO(), checkinDate, checkoutDate ));
+        }
+        return ResponseEntity.ok(propertyService.getAll(criteria, checkinDate, checkoutDate));
+    }
+
 
     @GetMapping
     public ResponseEntity<List<PropertyResponseDTO>> getClientProperties(
