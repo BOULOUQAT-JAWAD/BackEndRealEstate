@@ -60,4 +60,30 @@ public class PjServicesService {
         log.info(String.valueOf(pjService));
         return pjService;
     }
+
+    public List<PjServiceResponseDTO> getPjServicesByType(PjServiceType type) {
+        log.info("Fetching PjServices of type: {}", type);
+        return pjServiceRepository.findByPjServiceType(type).stream()
+                .map(pjServiceMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PjServiceResponseDTO> getPjServicesForClient() {
+        return getPjServicesByType(PjServiceType.Client);
+    }
+
+    public List<PjServiceResponseDTO> getPjServicesForVoyageur() {
+        return getPjServicesByType(PjServiceType.Voyageur);
+    }
+
+    public PjService get(Long id){
+        return pjServiceRepository.findById(
+                id
+        ).orElseThrow(
+                () -> new NotFoundException("PjService Not Found")
+        );
+    }
+
+
+
 }

@@ -44,7 +44,7 @@ public class ProviderInvoice {
     private double gain;
     @Enumerated(EnumType.STRING)
     @Column(length = 255)
-    private ProviderServiceType status;
+    private ProviderServiceStatus status;
     private String stripePaymentId;
 
     public ProviderInvoice deepCopy() {

@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.realestate.backendrealestate.core.enums.ProviderServiceStatus;
 import com.realestate.backendrealestate.core.enums.ProviderServiceType;
 import com.realestate.backendrealestate.core.enums.ServiceType;
 import com.realestate.backendrealestate.core.exception.BadRequestException;
@@ -247,7 +248,7 @@ public class StripeService {
                                             .pjService(pjServicesService.getPjServiceById(pjServiceId))
                                             .serviceType(ServiceType.property)
                                             .property(propertyService.findPropertyById(propertyServiceCheckout.getPropertyId()))
-                                            .status(ProviderServiceType.InProgress)
+                                            .status(ProviderServiceStatus.EN_COURS)
                                             .stripePaymentId(paymentId)
                                             .build());
                         }
