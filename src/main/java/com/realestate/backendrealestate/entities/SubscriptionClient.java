@@ -15,8 +15,7 @@ import java.util.Date;
 public class SubscriptionClient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subscriptionClientId;
+    private String subscriptionClientId;
     private double annualPrice;
     private LocalDate subsDate;
     private LocalDate endSubsDate;

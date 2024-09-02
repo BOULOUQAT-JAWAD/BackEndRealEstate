@@ -169,4 +169,8 @@ public class PropertyService {
         }
     }
 
+    public double getPropertyPrice(Long propertyId){
+        return get(propertyId).getPricePerNight();
+    }
+
 }

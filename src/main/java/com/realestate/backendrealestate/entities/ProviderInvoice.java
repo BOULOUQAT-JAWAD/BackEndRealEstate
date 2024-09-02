@@ -32,6 +32,10 @@ public class ProviderInvoice {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pjService_id")
+    private PjService pjService;
+
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -39,7 +43,9 @@ public class ProviderInvoice {
     private String rating;
     private double gain;
     @Enumerated(EnumType.STRING)
-    private ProviderServiceStatus status;
+    @Column(length = 255)
+    private ProviderServiceType status;
+    private String stripePaymentId;
 
     public ProviderInvoice deepCopy() {
         return ProviderInvoice.builder()

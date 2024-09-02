@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.exception.NotFoundException;
+import com.realestate.backendrealestate.core.exception.RealEstateGlobalException;
 import com.realestate.backendrealestate.entities.Client;
 import com.realestate.backendrealestate.repositories.ClientRepository;
 import com.realestate.backendrealestate.repositories.UserRepository;
@@ -35,5 +36,13 @@ public class ClientService {
 
     public void saveClient(Client client){
         clientRepository.save(client);
+    }
+
+    public Client getClientByEmail(String email){
+        return clientRepository.findByUserEmail(email).orElseThrow( () -> new NotFoundException("Client not found"));
+    }
+
+    public Client getClientByUserId(Long userId) {
+        return clientRepository.findByUserUserId(userId).orElseThrow( () -> new NotFoundException("Client not found"));
     }
 }

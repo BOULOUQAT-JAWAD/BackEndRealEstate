@@ -7,15 +7,18 @@ import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.mappers.PjServiceMapper;
 import com.realestate.backendrealestate.repositories.PjServiceRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 @Validated
 public class PjServicesService {
@@ -23,27 +26,38 @@ public class PjServicesService {
     private final PjServiceRepository pjServiceRepository;
     private final PjServiceMapper pjServiceMapper;
 
-    public List<PjServiceResponseDTO> getPjServicesByType(PjServiceType type) {
-        log.info("Fetching PjServices of type: {}", type);
-        return pjServiceRepository.findByPjServiceType(type).stream()
+    @Value("${PjPricing.clientAnnualSubscription}")
+    private double defaultClientAnnualSubscription;
+
+    public List<PjServiceResponseDTO> getAll() {
+        // Convert Property to PropertyResponseDTO
+        return pjServiceRepository.findAll().stream()
                 .map(pjServiceMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<PjServiceResponseDTO> getPjServicesForClient() {
-        return getPjServicesByType(PjServiceType.Client);
+    public double getAnnualClientSubscriptionPrice(){
+        Optional<PjService> pjServiceOptional =
+                pjServiceRepository.findByPjServiceType(PjServiceType.CLIENT_ANNUAL_SUBSCRIPTION);
+        if (pjServiceOptional.isEmpty()){
+             pjServiceRepository
+                    .save(PjService.builder()
+                            .price(defaultClientAnnualSubscription)
+                            .pjServiceType(PjServiceType.CLIENT_ANNUAL_SUBSCRIPTION)
+                            .title("Client Annual Subscription")
+                            .description("Client Annual Subscription")
+                            .build());
+             return defaultClientAnnualSubscription;
+        }
+        return pjServiceOptional.get().getPrice();
     }
 
-    public List<PjServiceResponseDTO> getPjServicesForVoyageur() {
-        return getPjServicesByType(PjServiceType.Voyageur);
+    public double getPjServicePrice(Long pjServiceId){
+        return getPjServiceById(pjServiceId).getPrice();
     }
-
-    public PjService get(Long id){
-        return pjServiceRepository.findById(
-                id
-        ).orElseThrow(
-                () -> new NotFoundException("PjService Not Found")
-        );
+    public PjService getPjServiceById(Long pjServiceId){
+        PjService pjService = pjServiceRepository.findById(pjServiceId).orElseThrow(()-> new NotFoundException("PjService with id "+pjServiceId+" does not exist"));
+        log.info(String.valueOf(pjService));
+        return pjService;
     }
-
 }

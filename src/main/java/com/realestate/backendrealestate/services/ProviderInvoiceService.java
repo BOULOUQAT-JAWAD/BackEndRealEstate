@@ -1,5 +1,7 @@
 package com.realestate.backendrealestate.services;
 
+
+import com.realestate.backendrealestate.entities.ProviderInvoice;
 import com.realestate.backendrealestate.core.enums.ProviderServiceStatus;
 import com.realestate.backendrealestate.core.enums.ServiceType;
 import com.realestate.backendrealestate.dtos.responses.ProviderInvoiceResponseDTO;
@@ -22,19 +24,14 @@ import java.util.stream.Collectors;
 public class ProviderInvoiceService {
 
     private final ProviderInvoiceRepository providerInvoiceRepository;
-    private final ProviderInvoiceMapper providerInvoiceMapper;
 
-    public List<ProviderInvoiceResponseDTO> getFilteredInvoices(ServiceType serviceType, ProviderServiceStatus status, LocalDate startDate, LocalDate endDate) {
-        List<ProviderInvoice> providerInvoices = providerInvoiceRepository.findFilteredInvoices(
-                serviceType,
-                status,
-                startDate,
-                endDate
-        );
-
-        return providerInvoices.stream()
-                .map(providerInvoiceMapper::toDto)
-                .collect(Collectors.toList());
+    public ProviderInvoice saveProviderInvoice(ProviderInvoice providerInvoice){
+        return providerInvoiceRepository.save(providerInvoice);
     }
+
+    public List<ProviderInvoice> getProviderInvoicesByPaymentId(String paymentId){
+        return providerInvoiceRepository.findAllByStripePaymentId(paymentId);
+    }
+
 
 }
