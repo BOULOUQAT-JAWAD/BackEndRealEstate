@@ -37,4 +37,8 @@ public class ClientService {
     public Client getClientByEmail(String email){
         return clientRepository.findByUserEmail(email).orElseThrow( () -> new NotFoundException("Client not found"));
     }
+
+    public Client getClientByUserId(Long userId) {
+        return clientRepository.findByUserUserId(userId).orElseThrow( () -> new NotFoundException("Client not found"));
+    }
 }

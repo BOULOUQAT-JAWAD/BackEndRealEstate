@@ -84,71 +84,9 @@ public class StripeService {
         objectMapper = new ObjectMapper();
     }
 
-    public PaymentCardTokenResponse createCardToken(PaymentCardRequest paymentCardRequest) {
-        Stripe.apiKey = this.stipeApiKey;
-
-
-        try {
-            log.info("Creating Card Token {}", paymentCardRequest);
-            Map<String, Object> card = new HashMap<>();
-            card.put("number", paymentCardRequest.getCardNumber());
-            card.put("exp_month", Integer.parseInt(paymentCardRequest.getExpMonth()));
-            card.put("exp_year", Integer.parseInt(paymentCardRequest.getExpYear()));
-            card.put("cvc", paymentCardRequest.getCvc());
-            Map<String, Object> params = new HashMap<>();
-            params.put("card", card);
-            Token token = Token.create(params);
-            if (token == null ) {
-                throw new BadRequestException("The given Card is not valid.");
-            }
-            log.info("Card Token created {}",token);
-            return PaymentCardTokenResponse.builder()
-                    .cardToken(token.getId())
-                    .build();
-        } catch (StripeException e) {
-            log.error("StripeService (createCardToken)", e);
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    public DefaultResponseDto charge(PaymentChargeRequest chargeRequest) {
-
-        try {
-            chargeRequest.setSuccess(false);
-            Map<String, Object> chargeParams = new HashMap<>();
-            chargeParams.put("amount", chargeRequest.getAmount());
-            chargeParams.put("currency", "EUR");
-            chargeParams.put("description",
-                    "Payment for id " + chargeRequest.getAdditionalInfo().getOrDefault("ID_TAG", ""));
-            chargeParams.put("source", chargeRequest.getStripeToken());
-            Map<String, Object> metaData = new HashMap<>();
-            metaData.put("id", chargeRequest.getChargeId());
-            metaData.putAll(chargeRequest.getAdditionalInfo());
-            chargeParams.put("metadata", metaData);
-            Charge charge = Charge.create(chargeParams);
-            chargeRequest.setMessage(charge.getOutcome().getSellerMessage());
-
-            if (charge.getPaid()) {
-                chargeRequest.setChargeId(charge.getId());
-                chargeRequest.setSuccess(true);
-
-            }
-            return DefaultResponseDto.builder()
-                    .message("Payment charged successfully")
-                    .time(new Date())
-                    .status(HttpStatus.OK.getReasonPhrase())
-                    .build();
-        } catch (StripeException e) {
-            log.error("StripeService (charge)", e);
-            throw new RuntimeException(e.getMessage());
-        }
-
-    }
-
 
     public Customer findOrCreateCustomer(String email)  {
         try {
-        // Step 1: Search for the customer by email
         CustomerListParams params = CustomerListParams.builder()
                 .setEmail(email)
                 .setLimit(1L)
@@ -156,12 +94,10 @@ public class StripeService {
 
         CustomerCollection customers = Customer.list(params);
 
-        // Step 2: Check if the customer exists
         if (!customers.getData().isEmpty()) {
             return customers.getData().get(0);
         }
 
-        // Step 3: If customer does not exist, create a new one
         CustomerCreateParams createParams = CustomerCreateParams.builder()
                 .setEmail(email)
                 .setDescription("New Customer")
@@ -332,15 +268,17 @@ public class StripeService {
         try {
 
             Stripe.apiKey = this.stipeApiKey;
+            String authenticatedUserEmail = "john.doe5@example.com";
+//            String authenticatedUserEmail = securityService.getAuthenticatedUser().getEmail();
             log.info("Finding an existing customer record from Stripe or creating a new one if needed");
-            Customer customer = findOrCreateCustomer("ok@gmail.com");
-    //      Customer customer = findOrCreateCustomer(securityService.getAuthenticatedUser().getEmail());
+     //       Customer customer = findOrCreateCustomer("ok@gmail.com");
+            Customer customer = findOrCreateCustomer(authenticatedUserEmail);
 
             BigDecimal totalAmount = BigDecimal.valueOf(pjServicesService.getAnnualClientSubscriptionPrice());
 
             Map<String, String> metadata = new HashMap<>();
             metadata.put("subscription", "client");
-            metadata.put("client", "ok@gmail.com");
+            metadata.put("client", authenticatedUserEmail);
 
             SessionCreateParams paramsBuilder = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)

@@ -2,6 +2,8 @@ package com.realestate.backendrealestate.services;
 
 
 import com.realestate.backendrealestate.core.exception.BadRequestException;
+import com.realestate.backendrealestate.core.exception.RealEstateGlobalException;
+import com.realestate.backendrealestate.dtos.responses.SubscriptionClientResponse;
 import com.realestate.backendrealestate.entities.Client;
 import com.realestate.backendrealestate.entities.SubscriptionClient;
 import com.realestate.backendrealestate.repositories.SubscriptionClientRepository;
@@ -46,5 +48,27 @@ public class SubscriptionClientService {
         return client.getSubscriptionClients()
                 .stream()
                 .anyMatch(subscriptionClient -> subscriptionClient.getEndSubsDate().isAfter(LocalDate.now()));
+    }
+
+    public SubscriptionClientResponse getClientSubscription(Long userId) {
+        Client client = clientService.getClientByUserId(userId);
+        if (!isSubscribed(client)){
+            return SubscriptionClientResponse.builder()
+                    .isClientSubscribed(false)
+                    .build();
+        }
+        SubscriptionClient subscriptionClient = getSubscription(client.getClientId());
+        return SubscriptionClientResponse.builder()
+                .isClientSubscribed(true)
+                .annualPrice(subscriptionClient.getAnnualPrice())
+                .endSubsDate(subscriptionClient.getEndSubsDate())
+                .subsDate(subscriptionClient.getSubsDate())
+                .subscriptionClientId(subscriptionClient.getSubscriptionClientId())
+                .build();
+    }
+
+    public SubscriptionClient getSubscription(Long clientId){
+        return subscriptionClientRepository.findByClientClientId(clientId).orElseThrow(() -> {log.error("client subscription not found");
+            return new RealEstateGlobalException("client subscription not found");});
     }
 }

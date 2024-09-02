@@ -34,23 +34,6 @@ public class PaymentController {
 
     private StripeService stripeService;
 
-    @PostMapping("/card/token")
-    @ResponseBody
-    public ResponseEntity<PaymentCardTokenResponse> createCardToken(@RequestBody PaymentCardRequest model) {
-        return ResponseEntity.ok(stripeService.createCardToken(model));
-    }
-
-    @PostMapping("/charge")
-    @ResponseBody
-    public ResponseEntity<DefaultResponseDto> charge(@RequestBody PaymentChargeRequest model) {
-        return ResponseEntity.ok(stripeService.charge(model));
-    }
-
-    @PostMapping("/checkout")
-    @ResponseBody
-    public ResponseEntity<DefaultResponseDto> checkout(@RequestBody PaymentChargeRequest model) {
-        return ResponseEntity.ok(stripeService.charge(model));
-    }
 
     @PostMapping("/checkout/pjServices")
     public ResponseEntity<CheckoutResponse> checkoutPjServices(@RequestBody PjServicesPaymentRequest pjServicesPaymentRequest)  {
