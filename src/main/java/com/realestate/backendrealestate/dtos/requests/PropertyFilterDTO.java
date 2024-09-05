@@ -16,8 +16,4 @@ public class PropertyFilterDTO {
     private String country;
     private String city;
     private PropertyType propertyType;
-    private int numberOfRooms;
-    private int numberOfPersons;
-    private int surface;
-    private double pricePerNight;
 }

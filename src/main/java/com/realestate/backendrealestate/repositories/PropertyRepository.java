@@ -27,20 +27,28 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             "(COALESCE(:country, NULL) IS NULL OR LOWER(p.country) LIKE :country) AND " +
             "(COALESCE(:city, NULL) IS NULL OR LOWER(p.city) LIKE :city) AND " +
             "(:propertyType IS NULL OR p.propertyType = :propertyType) AND " +
-            "(:numberOfRooms = 0 OR p.numberOfRooms = :numberOfRooms) AND " +
-            "(:numberOfPersons = 0 OR p.numberOfPersons = :numberOfPersons) AND " +
-            "(:surface = 0 OR p.surface = :surface) AND " +
+            "(:minNumberOfRooms IS NULL OR p.numberOfRooms >= :minNumberOfRooms) AND " +
+            "(:maxNumberOfRooms IS NULL OR p.numberOfRooms <= :maxNumberOfRooms) AND " +
+            "(:minNumberOfPersons IS NULL OR p.numberOfPersons >= :minNumberOfPersons) AND " +
+            "(:maxNumberOfPersons IS NULL OR p.numberOfPersons <= :maxNumberOfPersons) AND " +
+            "(:minSurface IS NULL OR p.surface >= :minSurface) AND " +
+            "(:maxSurface IS NULL OR p.surface <= :maxSurface) AND " +
+            "(:minPricePerNight IS NULL OR p.pricePerNight >= :minPricePerNight) AND " +
+            "(:maxPricePerNight IS NULL OR p.pricePerNight <= :maxPricePerNight) AND " +
             "p.publish = true AND " +
-            "p.valid = true AND " +
-            "(:pricePerNight = 0.0 OR p.pricePerNight = :pricePerNight)")
+            "p.valid = true")
     List<Property> findFilteredProperties(
             @Param("description") String description,
             @Param("country") String country,
             @Param("city") String city,
             @Param("propertyType") PropertyType propertyType,
-            @Param("numberOfRooms") int numberOfRooms,
-            @Param("numberOfPersons") int numberOfPersons,
-            @Param("surface") int surface,
-            @Param("pricePerNight") double pricePerNight
+            @Param("minNumberOfRooms") Integer minNumberOfRooms,
+            @Param("maxNumberOfRooms") Integer maxNumberOfRooms,
+            @Param("minNumberOfPersons") Integer minNumberOfPersons,
+            @Param("maxNumberOfPersons") Integer maxNumberOfPersons,
+            @Param("minSurface") Integer minSurface,
+            @Param("maxSurface") Integer maxSurface,
+            @Param("minPricePerNight") Double minPricePerNight,
+            @Param("maxPricePerNight") Double maxPricePerNight
     );
 }

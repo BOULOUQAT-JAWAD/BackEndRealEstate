@@ -112,24 +112,35 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public List<PropertyResponseDTO> getAll(PropertyFilterDTO criteria, LocalDate checkinDate, LocalDate checkoutDate) {
+    public List<PropertyResponseDTO> getAll(PropertyFilterDTO criteria, LocalDate checkinDate, LocalDate checkoutDate,
+                                            Integer minNumberOfRooms, Integer maxNumberOfRooms,
+                                            Integer minNumberOfPersons, Integer maxNumberOfPersons,
+                                            Integer minSurface, Integer maxSurface,
+                                            Double minPricePerNight, Double maxPricePerNight) {
+
         String description = (criteria.getDescription() == null || criteria.getDescription().isEmpty()) ? null : "%" + criteria.getDescription().toLowerCase() + "%";
         String country = (criteria.getCountry() == null || criteria.getCountry().isEmpty()) ? null : "%" + criteria.getCountry().toLowerCase() + "%";
         String city = (criteria.getCity() == null || criteria.getCity().isEmpty()) ? null : "%" + criteria.getCity().toLowerCase() + "%";
+
         List<Property> properties = propertyRepository.findFilteredProperties(
-                        description,
-                        country,
-                        city,
-                        criteria.getPropertyType(),
-                        criteria.getNumberOfRooms(),
-                        criteria.getNumberOfPersons(),
-                        criteria.getSurface(),
-                        criteria.getPricePerNight()
-                ).stream()
-                .toList();
-        if(checkinDate != null && checkoutDate != null){
-             return getFilteredProperties(properties, checkinDate, checkoutDate, false);
+                description,
+                country,
+                city,
+                criteria.getPropertyType(),
+                minNumberOfRooms,
+                maxNumberOfRooms,
+                minNumberOfPersons,
+                maxNumberOfPersons,
+                minSurface,
+                maxSurface,
+                minPricePerNight,
+                maxPricePerNight
+        ).stream().toList();
+
+        if (checkinDate != null && checkoutDate != null) {
+            return getFilteredProperties(properties, checkinDate, checkoutDate, false);
         }
+
         return properties.stream().map(propertyMapper::toDto).toList();
     }
 
