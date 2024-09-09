@@ -19,9 +19,10 @@ import java.util.Date;
 public class RealEstateExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(value = {RealEstateGlobalException.class})
-    public ResponseEntity<DefaultResponseDto> handleException(RealEstateGlobalException exception) {
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity<DefaultResponseDto> handleException(Exception exception) {
         HttpStatus responseStatus;
+        log.error("an exception occurred : ",exception);
         if (exception instanceof InternalServerException){
             responseStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         } else if (exception instanceof NotFoundException) {
@@ -36,5 +37,7 @@ public class RealEstateExceptionHandler {
                 .build(),
                 responseStatus);
     }
+
+
 
 }

@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class PropertyResponseDTO{
     private Long propertyId;
+    private String title;
     private String description;
     private String country;
     private String city;

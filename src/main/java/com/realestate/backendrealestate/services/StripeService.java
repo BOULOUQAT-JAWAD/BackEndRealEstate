@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -116,12 +117,12 @@ public class StripeService {
 
         Stripe.apiKey = this.stipeApiKey;
         log.info("Finding an existing customer record from Stripe or creating a new one if needed");
-        Customer customer = findOrCreateCustomer("ok@gmail.com");
-//      Customer customer = findOrCreateCustomer(securityService.getAuthenticatedUser().getEmail());
+//        Customer customer = findOrCreateCustomer("ok@gmail.com");
+      Customer customer = findOrCreateCustomer(securityService.getAuthenticatedUser().getEmail());
 
         BigDecimal totalAmount = pjServicesPaymentRequest.getPropertyServiceCheckouts().stream()
                 .map(propertyService -> propertyService.getPjServicesIds().stream()
-                        .map(pjServiceId -> BigDecimal.valueOf(pjServicesService.getPjServicePrice(pjServiceId)))
+                        .map(pjServiceId -> BigDecimal.valueOf(pjServicesService.getPjServicePrice(pjServiceId)*100))
                         .reduce(BigDecimal.ZERO, BigDecimal::add))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -151,7 +152,7 @@ public class StripeService {
             SessionCreateParams paramsBuilder = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setCustomer(customer.getId())
-                    .setSuccessUrl(clientSuccessPaymentUrl)
+                    .setSuccessUrl("http://localhost:4200/client/servicePayed")
                     .setCancelUrl(clientCanceledPaymentUrl)
                     .addAllLineItem(lineItemList)
                     .putAllMetadata(metadata)
@@ -248,7 +249,9 @@ public class StripeService {
                                             .pjService(pjServicesService.getPjServiceById(pjServiceId))
                                             .serviceType(ServiceType.property)
                                             .property(propertyService.findPropertyById(propertyServiceCheckout.getPropertyId()))
-                                            .status(ProviderServiceStatus.EN_COURS)
+                                            .date(LocalDate.now())
+                                            .status(ProviderServiceStatus.OUVERT)
+                                            .gain(0)
                                             .stripePaymentId(paymentId)
                                             .build());
                         }
@@ -269,8 +272,9 @@ public class StripeService {
         try {
 
             Stripe.apiKey = this.stipeApiKey;
-            String authenticatedUserEmail = "john.doe5@example.com";
-//            String authenticatedUserEmail = securityService.getAuthenticatedUser().getEmail();
+//            String authenticatedUserEmail = "john.doe5@example.com";
+
+        String authenticatedUserEmail = securityService.getAuthenticatedUser().getEmail();
             log.info("Finding an existing customer record from Stripe or creating a new one if needed");
      //       Customer customer = findOrCreateCustomer("ok@gmail.com");
             Customer customer = findOrCreateCustomer(authenticatedUserEmail);

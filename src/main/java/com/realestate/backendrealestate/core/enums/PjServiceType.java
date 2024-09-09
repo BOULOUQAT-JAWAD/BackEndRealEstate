@@ -2,7 +2,7 @@ package com.realestate.backendrealestate.core.enums;
 
 public enum PjServiceType {
     Voyageur,
-    Client,
+    CLIENT,
     RESERVATION_COMMISSION,
     CLIENT_ANNUAL_SUBSCRIPTION
 }

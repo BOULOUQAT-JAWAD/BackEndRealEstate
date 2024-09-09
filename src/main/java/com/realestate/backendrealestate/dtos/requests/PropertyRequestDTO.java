@@ -17,6 +17,7 @@ import java.util.List;
 public class PropertyRequestDTO {
 
     private Long propertyId;
+    private String title;
     @NotNull(message = "Description est requise")
     private String description;
     @NotNull(message = "Pays est requise")

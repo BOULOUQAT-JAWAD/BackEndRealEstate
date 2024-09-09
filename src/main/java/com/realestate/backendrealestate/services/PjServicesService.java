@@ -6,7 +6,6 @@ import com.realestate.backendrealestate.dtos.responses.PjServiceResponseDTO;
 import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.mappers.PjServiceMapper;
 import com.realestate.backendrealestate.repositories.PjServiceRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,9 +35,9 @@ public class PjServicesService {
     }
 
     public double getAnnualClientSubscriptionPrice(){
-        Optional<PjService> pjServiceOptional =
+        List<PjService> pjServices =
                 pjServiceRepository.findByPjServiceType(PjServiceType.CLIENT_ANNUAL_SUBSCRIPTION);
-        if (pjServiceOptional.isEmpty()){
+        if (pjServices.isEmpty()){
              pjServiceRepository
                     .save(PjService.builder()
                             .price(defaultClientAnnualSubscription)
@@ -49,7 +47,7 @@ public class PjServicesService {
                             .build());
              return defaultClientAnnualSubscription;
         }
-        return pjServiceOptional.get().getPrice();
+        return pjServices.get(0).getPrice();
     }
 
     public double getPjServicePrice(Long pjServiceId){
@@ -69,7 +67,7 @@ public class PjServicesService {
     }
 
     public List<PjServiceResponseDTO> getPjServicesForClient() {
-        return getPjServicesByType(PjServiceType.Client);
+        return getPjServicesByType(PjServiceType.CLIENT);
     }
 
     public List<PjServiceResponseDTO> getPjServicesForVoyageur() {
