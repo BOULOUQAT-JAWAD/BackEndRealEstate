@@ -43,4 +43,5 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ReservationInvoice> reservationInvoices;
+
 }

@@ -26,6 +26,7 @@ public class WebHookController {
 
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(@RequestBody String payload, HttpServletRequest request) {
+        System.out.println("webhook ya3ni");
         return stripeService.handleWebhook(payload, request);
     }
 

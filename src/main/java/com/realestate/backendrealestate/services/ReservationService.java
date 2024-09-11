@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
+import com.realestate.backendrealestate.core.exception.RealEstateGlobalException;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.entities.Property;
 import com.realestate.backendrealestate.entities.Reservation;
@@ -101,5 +102,16 @@ public class ReservationService {
         return reservations.stream()
                 .map(reservationMapper::toDto)
                 .toList();
+    }
+
+    public Reservation getReservationById(Long id){
+        return reservationRepository.findById(id).orElseThrow(() -> {log.error("Reservation not found");
+            return new RealEstateGlobalException("Reservation not found");});
+    }
+
+    public void reservationPaid(Long reservationId) {
+        Reservation reservation = getReservationById(reservationId);
+        reservation.setStatus(ReservationStatus.CONFIRME);
+        reservationRepository.save(reservation);
     }
 }
