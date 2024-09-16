@@ -1,14 +1,13 @@
 package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
+import com.realestate.backendrealestate.core.exception.RealEstateGlobalException;
 import com.realestate.backendrealestate.dtos.requests.ReservationRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
-import com.realestate.backendrealestate.entities.Client;
 import com.realestate.backendrealestate.entities.Property;
 import com.realestate.backendrealestate.entities.Reservation;
 import com.realestate.backendrealestate.entities.Traveler;
 import com.realestate.backendrealestate.mappers.ReservationMapper;
-import com.realestate.backendrealestate.repositories.PropertyRepository;
 import com.realestate.backendrealestate.repositories.ReservationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -48,7 +47,7 @@ public class ReservationService {
     public List<ReservationResponseDTO> getClientReservations(LocalDate checkinDate, LocalDate checkoutDate, ReservationStatus status) {
 
         List<Property> properties = propertyService.findPropertiesByClient();
-        List<Reservation> reservations = new ArrayList<>(List.of());
+        List<Reservation> reservations = new java.util.ArrayList<>(List.of());
 
         properties.forEach(
                 property -> {
@@ -71,7 +70,7 @@ public class ReservationService {
     public List<ReservationResponseDTO> getClientReservationsDateRange(LocalDate checkinDate, LocalDate checkoutDate, ReservationStatus status) {
 
         List<Property> properties = propertyService.findPropertiesByClient();
-        List<Reservation> reservations = new ArrayList<>(List.of());
+        List<Reservation> reservations = new java.util.ArrayList<>(List.of());
 
         properties.forEach(
                 property -> {
@@ -94,7 +93,7 @@ public class ReservationService {
     public List<ReservationResponseDTO> getClientReservations() {
 
         List<Property> properties = propertyService.findPropertiesByClient();
-        List<Reservation> reservations = new ArrayList<>(List.of());
+        List<Reservation> reservations = new java.util.ArrayList<>(List.of());
 
         properties.forEach(
                 property -> {
@@ -107,6 +106,17 @@ public class ReservationService {
         return reservations.stream()
                 .map(reservationMapper::toDto)
                 .toList();
+    }
+
+    public Reservation getReservationById(Long id){
+        return reservationRepository.findById(id).orElseThrow(() -> {log.error("Reservation not found");
+            return new RealEstateGlobalException("Reservation not found");});
+    }
+
+    public void reservationPaid(Long reservationId) {
+        Reservation reservation = getReservationById(reservationId);
+        reservation.setStatus(ReservationStatus.CONFIRME);
+        reservationRepository.save(reservation);
     }
 
     public ReservationResponseDTO save(ReservationRequestDTO reservationRequestDTO) {
@@ -126,4 +136,5 @@ public class ReservationService {
         return reservationMapper.toDto(reservationRepository.save(reservation));
 
     }
+
 }
