@@ -28,7 +28,7 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.saveOrUpdate(propertyRequestDTO));
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/home/getAll")
     public ResponseEntity<List<PropertyResponseDTO>> getAll(
             @ModelAttribute PropertyFilterDTO criteria,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
@@ -75,6 +75,22 @@ public class PropertyController {
     public ResponseEntity<PropertyResponseDTO> get(@PathVariable Long propertyId) {
         log.info("Getting property with id: {}", propertyId);
         return ResponseEntity.ok(propertyService.get(propertyId));
+    }
+
+    @GetMapping("/home/{propertyId}")
+    public ResponseEntity<PropertyResponseDTO> getOne(@PathVariable Long propertyId) {
+        log.info("Getting property with id: {}", propertyId);
+        return ResponseEntity.ok(propertyService.get(propertyId));
+    }
+
+    @GetMapping("/home/{propertyId}/available")
+    public ResponseEntity<Boolean> isPropertyAvailable(
+            @PathVariable Long propertyId,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate
+    ) {
+        log.info("check availability property with id: {}", propertyId);
+        return ResponseEntity.ok(propertyService.isPropertyAvailable(propertyId, checkinDate, checkoutDate));
     }
 
     // Only Pj Admin can call it

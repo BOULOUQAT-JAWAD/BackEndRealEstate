@@ -1,7 +1,7 @@
-package com.realestate.backendrealestate.dtos.responses;
+package com.realestate.backendrealestate.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.realestate.backendrealestate.core.enums.ReservationStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,15 +11,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationResponseDTO {
+public class ReservationRequestDTO {
 
-    private Long reservationId;
+    @NotNull(message = "propertyId est requise")
     private Long propertyId;
-    private Long travelerId;
+    @NotNull(message = "checkinDate est requise")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate checkinDate;
+    @NotNull(message = "checkoutDate est requise")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate checkoutDate;
-    private ReservationStatus status;
-    private double price;
 }

@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.controllers;
 
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
+import com.realestate.backendrealestate.dtos.requests.ReservationRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.services.ReservationService;
 import lombok.AllArgsConstructor;
@@ -53,5 +54,11 @@ public class ReservationController {
         List<ReservationResponseDTO> reservations = reservationService.getClientReservationsDateRange(checkinDate, checkoutDate, status);
 
         return ResponseEntity.ok(reservations);
+    }
+
+    @PostMapping
+    public ResponseEntity<ReservationResponseDTO> save(@RequestBody ReservationRequestDTO reservationRequestDTO){
+        log.info("Save Or Update Reservation");
+        return ResponseEntity.ok(reservationService.save(reservationRequestDTO));
     }
 }

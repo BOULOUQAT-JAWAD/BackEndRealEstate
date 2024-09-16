@@ -13,6 +13,7 @@ import com.realestate.backendrealestate.entities.Traveler;
 import com.realestate.backendrealestate.entities.User;
 import com.realestate.backendrealestate.entities.UserToken;
 import com.realestate.backendrealestate.repositories.ClientRepository;
+import com.realestate.backendrealestate.repositories.TravelerRepository;
 import com.realestate.backendrealestate.security.jwt.JwtUtils;
 import com.realestate.backendrealestate.services.smptHandler.MailContentBuilder;
 import com.realestate.backendrealestate.services.smptHandler.MailService;
@@ -44,7 +45,7 @@ public class SecurityService {
     private final UserService userService;
     private final ClientRepository clientRepository;
     private final ProviderService providerService;
-    private final TravelerService travelerService;
+    private final TravelerRepository travelerRepository;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
@@ -105,7 +106,7 @@ public class SecurityService {
                 clientRepository.save(Client.builder().user(savedUser).build());
                 break;
             case TRAVELER:
-                travelerService.saveTraveler(Traveler.builder().user(savedUser).build());
+                travelerRepository.save(Traveler.builder().user(savedUser).build());
                 break;
             case PROVIDER:
                 providerService.saveProvider(Provider.builder().user(savedUser).build());

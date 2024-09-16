@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -40,6 +41,15 @@ public class PropertyService {
     public PropertyResponseDTO get(long propertyId) {
         Property property = findPropertyById(propertyId);
         return convertPropertyToDTO(property);
+    }
+
+    public Boolean isPropertyAvailable(long propertyId, LocalDate checkinDate, LocalDate checkoutDate ) {
+        Property property = findPropertyById(propertyId);
+        List<Property> propertyList = Collections.singletonList(property);
+
+        List<PropertyResponseDTO> filteredProperties = getFilteredProperties(propertyList, checkinDate, checkoutDate, false);
+
+        return !filteredProperties.isEmpty();
     }
 
     public List<PropertyResponseDTO> getClientProperties(Boolean publish, Boolean valid) {
