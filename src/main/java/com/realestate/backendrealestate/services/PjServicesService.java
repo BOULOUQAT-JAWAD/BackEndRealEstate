@@ -38,14 +38,14 @@ public class PjServicesService {
         List<PjService> pjServices =
                 pjServiceRepository.findByPjServiceType(PjServiceType.CLIENT_ANNUAL_SUBSCRIPTION);
         if (pjServices.isEmpty()){
-             pjServiceRepository
+            pjServiceRepository
                     .save(PjService.builder()
                             .price(defaultClientAnnualSubscription)
                             .pjServiceType(PjServiceType.CLIENT_ANNUAL_SUBSCRIPTION)
                             .title("Client Annual Subscription")
                             .description("Client Annual Subscription")
                             .build());
-             return defaultClientAnnualSubscription;
+            return defaultClientAnnualSubscription;
         }
         return pjServices.get(0).getPrice();
     }

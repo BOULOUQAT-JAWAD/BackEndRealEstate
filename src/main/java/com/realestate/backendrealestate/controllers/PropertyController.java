@@ -28,17 +28,37 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.saveOrUpdate(propertyRequestDTO));
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/home/getAll")
     public ResponseEntity<List<PropertyResponseDTO>> getAll(
             @ModelAttribute PropertyFilterDTO criteria,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate,
+            @RequestParam(required = false) Integer minNumberOfRooms,
+            @RequestParam(required = false) Integer maxNumberOfRooms,
+            @RequestParam(required = false) Integer minNumberOfPersons,
+            @RequestParam(required = false) Integer maxNumberOfPersons,
+            @RequestParam(required = false) Integer minSurface,
+            @RequestParam(required = false) Integer maxSurface,
+            @RequestParam(required = false) Double minPricePerNight,
+            @RequestParam(required = false) Double maxPricePerNight
     ) {
         log.info("Getting All Properties");
         if(criteria == null){
-            return ResponseEntity.ok(propertyService.getAll(new PropertyFilterDTO(), checkinDate, checkoutDate ));
+            return ResponseEntity.ok(propertyService.getAll(
+                    new PropertyFilterDTO(),
+                    checkinDate, checkoutDate,
+                    minNumberOfRooms, maxNumberOfRooms,
+                    minNumberOfPersons, maxNumberOfPersons,
+                    minSurface, maxSurface,
+                    minPricePerNight, maxPricePerNight));
         }
-        return ResponseEntity.ok(propertyService.getAll(criteria, checkinDate, checkoutDate));
+        return ResponseEntity.ok(propertyService.getAll(
+                criteria,
+                checkinDate, checkoutDate,
+                minNumberOfRooms, maxNumberOfRooms,
+                minNumberOfPersons, maxNumberOfPersons,
+                minSurface, maxSurface,
+                minPricePerNight, maxPricePerNight));
     }
 
 
@@ -55,6 +75,22 @@ public class PropertyController {
     public ResponseEntity<PropertyResponseDTO> get(@PathVariable Long propertyId) {
         log.info("Getting property with id: {}", propertyId);
         return ResponseEntity.ok(propertyService.get(propertyId));
+    }
+
+    @GetMapping("/home/{propertyId}")
+    public ResponseEntity<PropertyResponseDTO> getOne(@PathVariable Long propertyId) {
+        log.info("Getting property with id: {}", propertyId);
+        return ResponseEntity.ok(propertyService.get(propertyId));
+    }
+
+    @GetMapping("/home/{propertyId}/available")
+    public ResponseEntity<Boolean> isPropertyAvailable(
+            @PathVariable Long propertyId,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate
+    ) {
+        log.info("check availability property with id: {}", propertyId);
+        return ResponseEntity.ok(propertyService.isPropertyAvailable(propertyId, checkinDate, checkoutDate));
     }
 
     // Only Pj Admin can call it

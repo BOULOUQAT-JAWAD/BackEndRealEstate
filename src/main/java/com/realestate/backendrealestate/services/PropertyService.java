@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -40,6 +41,15 @@ public class PropertyService {
     public PropertyResponseDTO get(long propertyId) {
         Property property = findPropertyById(propertyId);
         return convertPropertyToDTO(property);
+    }
+
+    public Boolean isPropertyAvailable(long propertyId, LocalDate checkinDate, LocalDate checkoutDate ) {
+        Property property = findPropertyById(propertyId);
+        List<Property> propertyList = Collections.singletonList(property);
+
+        List<PropertyResponseDTO> filteredProperties = getFilteredProperties(propertyList, checkinDate, checkoutDate, false);
+
+        return !filteredProperties.isEmpty();
     }
 
     public List<PropertyResponseDTO> getClientProperties(Boolean publish, Boolean valid) {
@@ -112,24 +122,35 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
-    public List<PropertyResponseDTO> getAll(PropertyFilterDTO criteria, LocalDate checkinDate, LocalDate checkoutDate) {
+    public List<PropertyResponseDTO> getAll(PropertyFilterDTO criteria, LocalDate checkinDate, LocalDate checkoutDate,
+                                            Integer minNumberOfRooms, Integer maxNumberOfRooms,
+                                            Integer minNumberOfPersons, Integer maxNumberOfPersons,
+                                            Integer minSurface, Integer maxSurface,
+                                            Double minPricePerNight, Double maxPricePerNight) {
+
         String description = (criteria.getDescription() == null || criteria.getDescription().isEmpty()) ? null : "%" + criteria.getDescription().toLowerCase() + "%";
         String country = (criteria.getCountry() == null || criteria.getCountry().isEmpty()) ? null : "%" + criteria.getCountry().toLowerCase() + "%";
         String city = (criteria.getCity() == null || criteria.getCity().isEmpty()) ? null : "%" + criteria.getCity().toLowerCase() + "%";
+
         List<Property> properties = propertyRepository.findFilteredProperties(
-                        description,
-                        country,
-                        city,
-                        criteria.getPropertyType(),
-                        criteria.getNumberOfRooms(),
-                        criteria.getNumberOfPersons(),
-                        criteria.getSurface(),
-                        criteria.getPricePerNight()
-                ).stream()
-                .toList();
-        if(checkinDate != null && checkoutDate != null){
-             return getFilteredProperties(properties, checkinDate, checkoutDate, false);
+                description,
+                country,
+                city,
+                criteria.getPropertyType(),
+                minNumberOfRooms,
+                maxNumberOfRooms,
+                minNumberOfPersons,
+                maxNumberOfPersons,
+                minSurface,
+                maxSurface,
+                minPricePerNight,
+                maxPricePerNight
+        ).stream().toList();
+
+        if (checkinDate != null && checkoutDate != null) {
+            return getFilteredProperties(properties, checkinDate, checkoutDate, false);
         }
+
         return properties.stream().map(propertyMapper::toDto).toList();
     }
 

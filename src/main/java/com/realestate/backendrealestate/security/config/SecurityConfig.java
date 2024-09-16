@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/auth/**","/BackEndRealEstate/images/**","/api/properties/getAll","/webhook").permitAll()
+                        .requestMatchers("/api/auth/**","/BackEndRealEstate/images/**", "/api/properties/home/**", "/api/pjServices/voyageur", "/webhook").permitAll()
                         .anyRequest().authenticated()
                 );
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
