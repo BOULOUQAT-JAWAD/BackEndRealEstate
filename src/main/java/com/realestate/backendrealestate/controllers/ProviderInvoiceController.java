@@ -33,7 +33,7 @@ public class ProviderInvoiceController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam(required = false) ProviderServiceStatus status
     ) {
-        return ResponseEntity.ok(providerInvoiceService.getFilteredInvoices(ServiceType.reservation,status,startDate,endDate));
+        return ResponseEntity.ok(providerInvoiceService.getClientReservationsServices(status,startDate,endDate));
     }
 
     @GetMapping("/properties/client")
@@ -41,6 +41,32 @@ public class ProviderInvoiceController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam(required = false) ProviderServiceStatus status) {
-        return ResponseEntity.ok(providerInvoiceService.getFilteredInvoices(ServiceType.property,status,startDate,endDate));
+        return ResponseEntity.ok(providerInvoiceService.getClientPropertiesServices(status,startDate,endDate));
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getAll(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) ProviderServiceStatus status) {
+        return ResponseEntity.ok(providerInvoiceService.getAll(status,startDate,endDate));
+    }
+
+    @GetMapping("/reservations")
+    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getReservationsServices(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) ProviderServiceStatus status
+    ) {
+        return ResponseEntity.ok(providerInvoiceService.getReservationsServices(status,startDate,endDate));
+    }
+
+    @GetMapping("/properties")
+    public ResponseEntity<List<ProviderInvoiceResponseDTO>> getPropertiesServices(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) ProviderServiceStatus status) {
+        return ResponseEntity.ok(providerInvoiceService.getPropertiesServices(status,startDate,endDate));
+    }
+
 }

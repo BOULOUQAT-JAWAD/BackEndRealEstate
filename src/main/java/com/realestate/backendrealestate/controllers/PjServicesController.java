@@ -31,4 +31,10 @@ public class PjServicesController {
         log.info("Getting PjServices For Voyageur");
         return ResponseEntity.ok(pjServicesService.getPjServicesForVoyageur());
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<PjServiceResponseDTO>> getAll() {
+        log.info("Getting All PjServices");
+        return ResponseEntity.ok(pjServicesService.getAll());
+    }
 }

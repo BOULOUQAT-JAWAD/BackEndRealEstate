@@ -126,4 +126,31 @@ public class ReservationService {
         return reservationMapper.toDto(reservationRepository.save(reservation));
 
     }
+
+    public List<Reservation> getAll(){
+        return reservationRepository.findAll();
+    }
+
+    public List<ReservationResponseDTO> getAll(LocalDate checkinDate, LocalDate checkoutDate, ReservationStatus status){
+
+        List<Property> properties = propertyService.findAll();
+        List<Reservation> reservations = new ArrayList<>(List.of());
+
+        properties.forEach(
+                property -> {
+                    reservations.addAll(
+                            reservationRepository.findFilteredReservations(
+                                    property.getPropertyId(),
+                                    checkinDate,
+                                    checkoutDate,
+                                    status
+                            )
+                    );
+                }
+        );
+
+        return reservations.stream()
+                .map(reservationMapper::toDto)
+                .toList();
+    }
 }

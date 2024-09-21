@@ -71,6 +71,14 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.getClientProperties(publish, valid));
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<List<PropertyResponseDTO>> getAll(
+            @RequestParam(value = "valid", required = false) Boolean valid
+    ) {
+        log.info("Getting Properties");
+        return ResponseEntity.ok(propertyService.findAll(valid));
+    }
+
     @GetMapping("/{propertyId}")
     public ResponseEntity<PropertyResponseDTO> get(@PathVariable Long propertyId) {
         log.info("Getting property with id: {}", propertyId);
