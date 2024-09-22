@@ -72,4 +72,11 @@ public class ReservationController {
 
         return ResponseEntity.ok(reservations);
     }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ReservationResponseDTO> get(
+            @PathVariable long reservationId
+    ) {
+        return ResponseEntity.ok(reservationService.getOne(reservationId));
+    }
 }

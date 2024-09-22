@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
+import com.realestate.backendrealestate.core.exception.NotFoundException;
 import com.realestate.backendrealestate.dtos.requests.ReservationRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.entities.Client;
@@ -152,5 +153,14 @@ public class ReservationService {
         return reservations.stream()
                 .map(reservationMapper::toDto)
                 .toList();
+    }
+
+    public Reservation get(long reservationId){
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NotFoundException("Reservation not found with id: " + reservationId));
+    }
+
+    public ReservationResponseDTO getOne(long reservationId){
+        return reservationMapper.toDto(get(reservationId));
     }
 }
