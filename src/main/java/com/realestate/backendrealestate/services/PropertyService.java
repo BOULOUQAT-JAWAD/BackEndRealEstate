@@ -38,6 +38,13 @@ public class PropertyService {
         return convertPropertyToDTO(newProperty);
     }
 
+    public PropertyResponseDTO InvalidProperty(long propertyId) {
+        Property property = findPropertyById(propertyId);
+        property.setValid(false);
+        Property newProperty = propertyRepository.save(property);
+        return convertPropertyToDTO(newProperty);
+    }
+
     public PropertyResponseDTO get(long propertyId) {
         Property property = findPropertyById(propertyId);
         return convertPropertyToDTO(property);

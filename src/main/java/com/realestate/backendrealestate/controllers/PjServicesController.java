@@ -1,13 +1,12 @@
 package com.realestate.backendrealestate.controllers;
 
+import com.realestate.backendrealestate.dtos.requests.PjServiceRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PjServiceResponseDTO;
 import com.realestate.backendrealestate.services.PjServicesService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,5 +35,21 @@ public class PjServicesController {
     public ResponseEntity<List<PjServiceResponseDTO>> getAll() {
         log.info("Getting All PjServices");
         return ResponseEntity.ok(pjServicesService.getAll());
+    }
+
+    @GetMapping("/{pjServiceId}")
+    public ResponseEntity<PjServiceResponseDTO> get(
+            @PathVariable long pjServiceId
+    ) {
+        log.info("Getting one PjServices {}", pjServiceId);
+        return ResponseEntity.ok(pjServicesService.getOne(pjServiceId));
+    }
+
+    @PostMapping
+    public ResponseEntity<PjServiceResponseDTO> saveOrUpdate(
+            @RequestBody PjServiceRequestDTO pjServiceRequestDTO
+            ) {
+        log.info("Saving or updating PjService");
+        return ResponseEntity.ok(pjServicesService.saveOrUpdate(pjServiceRequestDTO));
     }
 }

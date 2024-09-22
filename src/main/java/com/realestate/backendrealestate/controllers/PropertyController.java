@@ -107,6 +107,11 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.validateProperty(propertyId));
     }
 
+    @GetMapping("/{propertyId}/invalid")
+    public ResponseEntity<PropertyResponseDTO> inValidProperty(@PathVariable Long propertyId) {
+        return ResponseEntity.ok(propertyService.InvalidProperty(propertyId));
+    }
+
     @GetMapping("/occupied")
     public ResponseEntity<List<PropertyResponseDTO>> getClientOccupiedProperties(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,

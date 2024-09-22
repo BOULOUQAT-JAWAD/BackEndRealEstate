@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.services;
 
+import com.realestate.backendrealestate.core.exception.NotFoundException;
 import com.realestate.backendrealestate.dtos.responses.PropertyResponseDTO;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.entities.ProviderInvoice;
@@ -33,6 +34,18 @@ public class ProviderInvoiceService {
 
     public ProviderInvoice saveProviderInvoice(ProviderInvoice providerInvoice){
         return providerInvoiceRepository.save(providerInvoice);
+    }
+
+    public ProviderInvoiceResponseDTO updateStatus(long providerInvoiceId, ProviderServiceStatus status){
+
+        ProviderInvoice providerInvoice = providerInvoiceRepository.findById(
+                providerInvoiceId
+        ).orElseThrow(
+                () -> new NotFoundException("Invoice not found")
+        );
+        providerInvoice.setStatus(status);
+        ProviderInvoice newInvoice = providerInvoiceRepository.save(providerInvoice);
+        return providerInvoiceMapper.toDto(newInvoice);
     }
 
     public List<ProviderInvoice> getProviderInvoicesByPaymentId(String paymentId){

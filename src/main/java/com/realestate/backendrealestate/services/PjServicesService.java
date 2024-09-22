@@ -2,6 +2,7 @@ package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.enums.PjServiceType;
 import com.realestate.backendrealestate.core.exception.NotFoundException;
+import com.realestate.backendrealestate.dtos.requests.PjServiceRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PjServiceResponseDTO;
 import com.realestate.backendrealestate.entities.PjService;
 import com.realestate.backendrealestate.mappers.PjServiceMapper;
@@ -82,6 +83,23 @@ public class PjServicesService {
         );
     }
 
+    public PjServiceResponseDTO getOne(Long id){
+        return pjServiceMapper.toDto(get(id));
+    }
 
+    public PjServiceResponseDTO saveOrUpdate(PjServiceRequestDTO pjServiceRequestDTO) {
+        PjService pjService;
 
+        if (pjServiceRequestDTO.getPjServiceId() != null) {
+            pjService = get(pjServiceRequestDTO.getPjServiceId());
+
+            pjService.setTitle(pjServiceRequestDTO.getTitle());
+            pjService.setDescription(pjServiceRequestDTO.getDescription());
+            pjService.setPrice(pjServiceRequestDTO.getPrice());
+            pjService.setPjServiceType(pjServiceRequestDTO.getPjServiceType());
+        }else {
+            pjService = pjServiceMapper.toEntity(pjServiceRequestDTO);
+        }
+        return pjServiceMapper.toDto(pjServiceRepository.save(pjService));
+    }
 }
