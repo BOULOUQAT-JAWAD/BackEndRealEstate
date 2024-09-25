@@ -16,6 +16,17 @@ public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice
     List<ProviderInvoice> findAllByStripePaymentId(String paymentId);
 
     @Query("SELECT pi FROM ProviderInvoice pi WHERE " +
+            "pi.serviceType = :serviceType AND " +
+            "(COALESCE(:status, NULL) IS NULL OR pi.status = :status) AND " +
+            "(COALESCE(:startDate, NULL) IS NULL OR pi.date >= :startDate) AND " +
+            "(COALESCE(:endDate, NULL) IS NULL OR pi.date <= :endDate)")
+    List<ProviderInvoice> findFilteredInvoices(@Param("serviceType") ServiceType serviceType,
+                                               @Param("status") ProviderServiceStatus status,
+                                               @Param("startDate") LocalDate startDate,
+                                               @Param("endDate") LocalDate endDate);
+
+
+    @Query("SELECT pi FROM ProviderInvoice pi WHERE " +
             "pi.serviceType = com.realestate.backendrealestate.core.enums.ServiceType.reservation AND " +
             "pi.reservation.reservationId = :reservationId AND " +
             "(COALESCE(:status, NULL) IS NULL OR pi.status = :status) AND " +
@@ -23,6 +34,7 @@ public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice
             "(COALESCE(:endDate, NULL) IS NULL OR pi.date <= :endDate)")
     List<ProviderInvoice> getReservationServices(@Param("reservationId") Long reservationId,
                                                  @Param("status") ProviderServiceStatus status,
+
                                                  @Param("startDate") LocalDate startDate,
                                                  @Param("endDate") LocalDate endDate);
 
@@ -36,4 +48,9 @@ public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice
                                               @Param("status") ProviderServiceStatus status,
                                               @Param("startDate") LocalDate startDate,
                                               @Param("endDate") LocalDate endDate);
+
+
+    List<ProviderInvoice> findAllByProviderProviderId(Long providerId);
+    List<ProviderInvoice> findAllByReservationReservationId(Long reservationId);
+
 }

@@ -18,25 +18,25 @@ import java.util.Date;
 @Slf4j
 public class RealEstateExceptionHandler {
 
-    @ResponseBody
-    @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity<DefaultResponseDto> handleException(Exception exception) {
-        HttpStatus responseStatus;
-        log.error("an exception occurred : ",exception);
-        if (exception instanceof InternalServerException){
-            responseStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        } else if (exception instanceof NotFoundException) {
-            responseStatus = HttpStatus.NOT_FOUND;
-        } else {
-            responseStatus = HttpStatus.BAD_REQUEST;
-        }
-        return new ResponseEntity<>(DefaultResponseDto.builder()
-                .message(exception.getMessage())
-                .status(responseStatus.getReasonPhrase())
-                .time(new Date())
-                .build(),
-                responseStatus);
-    }
+//    @ResponseBody
+//    @ExceptionHandler(value = {Exception.class})
+//    public ResponseEntity<DefaultResponseDto> handleException(Exception exception) {
+//        HttpStatus responseStatus;
+//        log.error("an exception occurred : ",exception);
+//        if (exception instanceof InternalServerException){
+//            responseStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+//        } else if (exception instanceof NotFoundException) {
+//            responseStatus = HttpStatus.NOT_FOUND;
+//        } else {
+//            responseStatus = HttpStatus.BAD_REQUEST;
+//        }
+//        return new ResponseEntity<>(DefaultResponseDto.builder()
+//                .message(exception.getMessage())
+//                .status(responseStatus.getReasonPhrase())
+//                .time(new Date())
+//                .build(),
+//                responseStatus);
+//    }
 
 
 
