@@ -1,6 +1,7 @@
 package com.realestate.backendrealestate.dtos.responses;
 
 
+import com.realestate.backendrealestate.core.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,4 +14,5 @@ public class AuthResponseDto {
     private String phoneNumber;
     private Long userId;
     private String token;
+    private Role role;
 }

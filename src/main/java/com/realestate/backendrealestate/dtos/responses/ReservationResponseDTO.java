@@ -5,6 +5,7 @@ import com.realestate.backendrealestate.core.enums.ReservationStatus;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,4 +23,7 @@ public class ReservationResponseDTO {
     private LocalDate checkoutDate;
     private ReservationStatus status;
     private double price;
+
+    private List<ReservationServiceResponseDto> reservationServices;
+
 }

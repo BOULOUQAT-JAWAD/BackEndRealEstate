@@ -13,6 +13,7 @@ import com.realestate.backendrealestate.dtos.requests.ReservationPaymentRequest;
 import com.realestate.backendrealestate.dtos.responses.CheckoutResponse;
 import com.realestate.backendrealestate.entities.ProviderInvoice;
 import com.realestate.backendrealestate.entities.User;
+import com.realestate.backendrealestate.services.smptHandler.MailService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -25,6 +26,7 @@ import com.stripe.param.CustomerListParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -60,12 +63,14 @@ public class StripeService {
     private final PjServicesService pjServicesService;
     private final SubscriptionClientService subscriptionClientService;
     private final ReservationService reservationService;
+    private final MailService mailService;
     private ObjectMapper objectMapper;
 
-    public StripeService(SecurityService securityService, PropertyService propertyService, ProviderInvoiceService providerInvoiceService, PjServicesService pjServicesService, SubscriptionClientService subscriptionClientService, ReservationService reservationService) {
+    public StripeService(SecurityService securityService, PropertyService propertyService, ProviderInvoiceService providerInvoiceService, PjServicesService pjServicesService, SubscriptionClientService subscriptionClientService, ReservationService reservationService, MailService mailService) {
         this.providerInvoiceService = providerInvoiceService;
         this.subscriptionClientService = subscriptionClientService;
         this.reservationService = reservationService;
+        this.mailService = mailService;
         Stripe.apiKey = stipeApiKey;
         this.securityService = securityService;
         this.propertyService = propertyService;
@@ -298,10 +303,13 @@ public class StripeService {
 
         try {
             Event event = Webhook.constructEvent(payload, request.getHeader("Stripe-Signature"), secret);
-
+            System.out.println(payload);
             switch (event.getType()) {
                 case "charge.succeeded":
                     log.info("charge.succeeded for a normal payment");
+                    if (extractReceiptUrl(payload) != null){
+                        sendReceiptToCustomer(extractReceiptUrl(payload),extractCustomerEmail(payload));
+                    }
                     handlePjServicePaymentEvent(event);
                     break;
 
@@ -324,6 +332,11 @@ public class StripeService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Webhook error: " + e.getMessage());
         }
+    }
+
+    private void sendReceiptToCustomer(String receiptLink,String customerEmail) {
+            String receipt = mailService.fetchReceiptHtml(receiptLink);
+            mailService.send(customerEmail,"Payment succeeded",receipt);
     }
 
 
@@ -434,5 +447,47 @@ public class StripeService {
 
         return longList;
     }
+
+    public  String extractReceiptUrl(String jsonString) {
+        // Parse the JSON string into a JSONObject
+        JSONObject jsonObject = new JSONObject(jsonString);
+
+        // Check if the "data" object exists and extract the necessary fields
+        if (jsonObject.has("data")) {
+            JSONObject dataObject = jsonObject.getJSONObject("data");
+            if (dataObject.has("object")) {
+                JSONObject chargeObject = dataObject.getJSONObject("object");
+                if (chargeObject.has("receipt_url")) {
+                    // Extract and return the "receipt_url" if it exists
+                    return chargeObject.getString("receipt_url");
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public  String extractCustomerEmail(String jsonString) {
+        // Parse the JSON string into a JSONObject
+        JSONObject jsonObject = new JSONObject(jsonString);
+
+        String customerEmail = null;
+
+        // Check if the "data" object exists and extract the necessary fields
+        if (jsonObject.has("data")) {
+            JSONObject dataObject = jsonObject.getJSONObject("data");
+            if (dataObject.has("object")) {
+                JSONObject chargeObject = dataObject.getJSONObject("object");
+
+                // Extract receipt_email if it exists
+                if (chargeObject.has("receipt_email")) {
+                    customerEmail = chargeObject.getString("receipt_email");
+                }
+            }
+        }
+
+        return customerEmail; // Return null if no email found
+    }
+
 
 }

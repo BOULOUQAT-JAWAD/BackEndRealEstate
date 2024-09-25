@@ -25,4 +25,7 @@ public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice
                                                @Param("status") ProviderServiceStatus status,
                                                @Param("startDate") LocalDate startDate,
                                                @Param("endDate") LocalDate endDate);
+
+    List<ProviderInvoice> findAllByProviderProviderId(Long providerId);
+    List<ProviderInvoice> findAllByReservationReservationId(Long reservationId);
 }

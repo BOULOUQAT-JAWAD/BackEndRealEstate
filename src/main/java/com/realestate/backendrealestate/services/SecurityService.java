@@ -73,6 +73,7 @@ public class SecurityService {
                     .phoneNumber(userInfo.getPhoneNumber())
                     .userId(userInfo.getUserId())
                     .token(jwtUtils.generateToken(user))
+                    .role(userInfo.getRole())
                     .build();
         } catch (AuthenticationException e) {
             log.error("Couldn't authenticate the user : ",e);
@@ -166,6 +167,7 @@ public class SecurityService {
                     .phoneNumber(userInfo.getPhoneNumber())
                     .userId(userInfo.getUserId())
                     .token(jwtUtils.generateToken(user))
+                    .role(userInfo.getRole())
                     .build();
         } catch (AuthenticationException e) {
             log.error("Couldn't authenticate the user : ",e);

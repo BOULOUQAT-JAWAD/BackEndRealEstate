@@ -6,6 +6,7 @@ import com.realestate.backendrealestate.core.enums.ProviderServiceStatus;
 import com.realestate.backendrealestate.core.enums.ServiceType;
 import com.realestate.backendrealestate.dtos.responses.ProviderInvoiceResponseDTO;
 import com.realestate.backendrealestate.entities.ProviderInvoice;
+import com.realestate.backendrealestate.entities.Reservation;
 import com.realestate.backendrealestate.mappers.ProviderInvoiceMapper;
 import com.realestate.backendrealestate.repositories.ProviderInvoiceRepository;
 import lombok.AllArgsConstructor;
@@ -48,4 +49,11 @@ public class ProviderInvoiceService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProviderInvoice> getProviderInvoicesByProviderId(Long providerId){
+        return providerInvoiceRepository.findAllByProviderProviderId(providerId);
+    }
+
+    public List<ProviderInvoice> getProviderInvoicesByReservationId(Long reservationId) {
+        return providerInvoiceRepository.findAllByReservationReservationId(reservationId);
+    }
 }
