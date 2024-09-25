@@ -15,6 +15,7 @@ import com.realestate.backendrealestate.repositories.TravelerRepository;
 import com.realestate.backendrealestate.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 @Validated
 public class TravelerService {
@@ -33,6 +33,13 @@ public class TravelerService {
     private final SecurityService securityService;
     private final UserRepository userRepository;
     private final ProviderInvoiceService providerInvoiceService;
+
+    public TravelerService(TravelerRepository travelerRepository, SecurityService securityService, UserRepository userRepository,@Lazy ProviderInvoiceService providerInvoiceService) {
+        this.travelerRepository = travelerRepository;
+        this.securityService = securityService;
+        this.userRepository = userRepository;
+        this.providerInvoiceService = providerInvoiceService;
+    }
 
     public void saveTraveler(Traveler traveler){
         travelerRepository.save(traveler);

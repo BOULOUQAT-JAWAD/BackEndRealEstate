@@ -13,6 +13,7 @@ import com.realestate.backendrealestate.entities.Traveler;
 import com.realestate.backendrealestate.entities.User;
 import com.realestate.backendrealestate.entities.UserToken;
 import com.realestate.backendrealestate.repositories.ClientRepository;
+import com.realestate.backendrealestate.repositories.ProviderRepository;
 import com.realestate.backendrealestate.repositories.TravelerRepository;
 import com.realestate.backendrealestate.security.jwt.JwtUtils;
 import com.realestate.backendrealestate.services.smptHandler.MailContentBuilder;
@@ -44,7 +45,7 @@ public class SecurityService {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final ClientRepository clientRepository;
-    private final ProviderService providerService;
+    private final ProviderRepository providerRepository;
     private final TravelerRepository travelerRepository;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
@@ -110,7 +111,7 @@ public class SecurityService {
                 travelerRepository.save(Traveler.builder().user(savedUser).build());
                 break;
             case PROVIDER:
-                providerService.saveProvider(Provider.builder().user(savedUser).build());
+                providerRepository.save(Provider.builder().user(savedUser).build());
                 break;
             default:
                 System.out.println("Not a valid day.");
