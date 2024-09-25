@@ -51,4 +51,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             @Param("minPricePerNight") Double minPricePerNight,
             @Param("maxPricePerNight") Double maxPricePerNight
     );
+    @Query("SELECT p FROM Property p WHERE " +
+            "(COALESCE(:valid, NULL) IS NULL OR p.valid = :valid)")
+    List<Property> findAllByValid(@Param("valid") Boolean valid);
 }

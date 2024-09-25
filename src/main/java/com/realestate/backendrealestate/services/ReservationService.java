@@ -2,6 +2,7 @@ package com.realestate.backendrealestate.services;
 
 import com.realestate.backendrealestate.core.enums.ReservationStatus;
 import com.realestate.backendrealestate.core.exception.RealEstateGlobalException;
+import com.realestate.backendrealestate.core.exception.NotFoundException;
 import com.realestate.backendrealestate.dtos.requests.ReservationRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.ReservationResponseDTO;
 import com.realestate.backendrealestate.entities.Property;
@@ -16,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -137,4 +139,39 @@ public class ReservationService {
 
     }
 
+    public List<Reservation> getAll(){
+        return reservationRepository.findAll();
+    }
+
+    public List<ReservationResponseDTO> getAll(LocalDate checkinDate, LocalDate checkoutDate, ReservationStatus status){
+
+        List<Property> properties = propertyService.findAll();
+        List<Reservation> reservations = new ArrayList<>(List.of());
+
+        properties.forEach(
+                property -> {
+                    reservations.addAll(
+                            reservationRepository.findFilteredReservations(
+                                    property.getPropertyId(),
+                                    checkinDate,
+                                    checkoutDate,
+                                    status
+                            )
+                    );
+                }
+        );
+
+        return reservations.stream()
+                .map(reservationMapper::toDto)
+                .toList();
+    }
+
+    public Reservation get(long reservationId){
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NotFoundException("Reservation not found with id: " + reservationId));
+    }
+
+    public ReservationResponseDTO getOne(long reservationId){
+        return reservationMapper.toDto(get(reservationId));
+    }
 }

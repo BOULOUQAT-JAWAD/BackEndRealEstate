@@ -38,6 +38,13 @@ public class PropertyService {
         return convertPropertyToDTO(newProperty);
     }
 
+    public PropertyResponseDTO InvalidProperty(long propertyId) {
+        Property property = findPropertyById(propertyId);
+        property.setValid(false);
+        Property newProperty = propertyRepository.save(property);
+        return convertPropertyToDTO(newProperty);
+    }
+
     public PropertyResponseDTO get(long propertyId) {
         Property property = findPropertyById(propertyId);
         return convertPropertyToDTO(property);
@@ -55,6 +62,13 @@ public class PropertyService {
     public List<PropertyResponseDTO> getClientProperties(Boolean publish, Boolean valid) {
         log.info("getClientProperties publish {} , valid {} ", publish, valid);
         return propertyRepository.findFilteredProperties(clientService.getAuthenticatedClient(), publish, valid).stream()
+                .map(this::convertPropertyToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PropertyResponseDTO> findAll(Boolean valid) {
+        log.info("getClientProperties valid {} ", valid);
+        return propertyRepository.findAllByValid(valid).stream()
                 .map(this::convertPropertyToDTO)
                 .collect(Collectors.toList());
     }
@@ -152,6 +166,14 @@ public class PropertyService {
         }
 
         return properties.stream().map(propertyMapper::toDto).toList();
+    }
+
+    public List<PropertyResponseDTO> getAll() {
+        return propertyRepository.findAll().stream().map(propertyMapper::toDto).toList();
+    }
+
+    public List<Property> findAll() {
+        return propertyRepository.findAll();
     }
 
     @Transactional

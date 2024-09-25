@@ -61,4 +61,22 @@ public class ReservationController {
         log.info("Save Or Update Reservation");
         return ResponseEntity.ok(reservationService.save(reservationRequestDTO));
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ReservationResponseDTO>> getAll(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkinDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkoutDate,
+            @RequestParam(required = false) ReservationStatus status) {
+
+        List<ReservationResponseDTO> reservations = reservationService.getAll(checkinDate, checkoutDate, status);
+
+        return ResponseEntity.ok(reservations);
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ReservationResponseDTO> get(
+            @PathVariable long reservationId
+    ) {
+        return ResponseEntity.ok(reservationService.getOne(reservationId));
+    }
 }

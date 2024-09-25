@@ -71,6 +71,14 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.getClientProperties(publish, valid));
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<List<PropertyResponseDTO>> getAll(
+            @RequestParam(value = "valid", required = false) Boolean valid
+    ) {
+        log.info("Getting Properties");
+        return ResponseEntity.ok(propertyService.findAll(valid));
+    }
+
     @GetMapping("/{propertyId}")
     public ResponseEntity<PropertyResponseDTO> get(@PathVariable Long propertyId) {
         log.info("Getting property with id: {}", propertyId);
@@ -97,6 +105,11 @@ public class PropertyController {
     @GetMapping("/{propertyId}/validate")
     public ResponseEntity<PropertyResponseDTO> validateProperty(@PathVariable Long propertyId) {
         return ResponseEntity.ok(propertyService.validateProperty(propertyId));
+    }
+
+    @GetMapping("/{propertyId}/invalid")
+    public ResponseEntity<PropertyResponseDTO> inValidProperty(@PathVariable Long propertyId) {
+        return ResponseEntity.ok(propertyService.InvalidProperty(propertyId));
     }
 
     @GetMapping("/occupied")

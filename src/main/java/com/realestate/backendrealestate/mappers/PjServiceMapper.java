@@ -1,5 +1,6 @@
 package com.realestate.backendrealestate.mappers;
 
+import com.realestate.backendrealestate.dtos.requests.PjServiceRequestDTO;
 import com.realestate.backendrealestate.dtos.responses.PjServiceResponseDTO;
 import com.realestate.backendrealestate.entities.PjService;
 import org.mapstruct.Mapper;
@@ -7,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface PjServiceMapper {
 
-//    P toEntity(PropertyRequestDTO propertyRequestDTO);
+    PjService toEntity(PjServiceRequestDTO pjServiceRequestDTO);
     PjServiceResponseDTO toDto(PjService pjService);
 
 //    @Mapping(target = "id", ignore = true) // Ignore ID during update
