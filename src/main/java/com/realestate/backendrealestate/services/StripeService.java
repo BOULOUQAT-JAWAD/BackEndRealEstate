@@ -211,7 +211,7 @@ public class StripeService {
             SessionCreateParams paramsBuilder = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setCustomer(customer.getId())
-                    .setSuccessUrl("http://localhost:4200/voyageur/reservationFaite")
+                    .setSuccessUrl("http://localhost:4200?reservation=done")
                     .setCancelUrl(clientCanceledPaymentUrl)
                     .addAllLineItem(lineItemList)
                     .putAllMetadata(metadata)
