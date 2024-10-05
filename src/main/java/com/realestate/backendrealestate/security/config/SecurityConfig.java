@@ -32,7 +32,7 @@ public class SecurityConfig {
         httpSecurity
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(List.of("/**")); // Add your front-end URL
+                    corsConfiguration.setAllowedOrigins(List.of("https://pj-backoffice.netlify.app/")); // Add your front-end URL
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfiguration.setAllowedHeaders(List.of("*"));
                     return corsConfiguration;
