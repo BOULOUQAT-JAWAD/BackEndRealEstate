@@ -8,8 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import java.nio.file.Path;
 
 @Service
 public class FileService {
@@ -31,7 +35,7 @@ public class FileService {
         return fileFullName + "." + fileExtension;
     }
 
-    public String saveFile(MultipartFile file, String fileName) {
+    /*public String saveFile(MultipartFile file, String fileName) {
         File directory = new File(directoryName);
 
         // Check if the directory exists
@@ -50,6 +54,29 @@ public class FileService {
 
         // Return the URL of the saved file
         return domainName + IMAGES_PATH + generatedFileName;
+    }*/
+
+    public String saveFile(MultipartFile file, String fileName) {
+        try {
+            // Ensure the directory exists
+            Path uploadDirectory = Paths.get(directoryName);
+            if (!Files.exists(uploadDirectory)) {
+                Files.createDirectories(uploadDirectory);
+            }
+
+            // Generate file name
+            String generatedFileName = generateFileName(file, fileName);
+            String filePath = uploadDirectory.resolve(generatedFileName).toString();
+
+            // Save the file locally
+            file.transferTo(new File(filePath));
+
+            // Return the URL for accessing the file (no BackEndRealEstate)
+            return domainName + IMAGES_PATH + generatedFileName;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save file: " + e.getMessage(), e);
+        }
     }
 
     public String updateFile(MultipartFile newFile, String fileName, String oldFilePath) {
