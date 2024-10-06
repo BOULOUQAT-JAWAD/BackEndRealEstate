@@ -303,7 +303,7 @@ public class StripeService {
 
 
     public ResponseEntity<String> handleWebhook(String payload, HttpServletRequest request) {
-        String secret = "whsec_74ac8f473398316a69243804d25c3dfd0d224b9f980c4ed12705867a32017577";
+        String secret = "whsec_JlOqj4aTxTBwCEE6SXFBZJrpyfM89KfP";
 
         try {
             Event event = Webhook.constructEvent(payload, request.getHeader("Stripe-Signature"), secret);
