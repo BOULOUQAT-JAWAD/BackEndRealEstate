@@ -1,5 +1,8 @@
 package com.realestate.backendrealestate.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,13 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
-import java.nio.file.Path;
-
+@Slf4j
 @Service
 public class FileService {
 
@@ -26,6 +27,17 @@ public class FileService {
 
     private static final String IMAGES_PATH = "/images/";
 
+    private final Cloudinary cloudinary;
+
+    public FileService(@Value("${cloudinary.cloud-name}") String cloudName,
+                       @Value("${cloudinary.api-key}") String apiKey,
+                       @Value("${cloudinary.api-secret}") String apiSecret) {
+        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret));
+    }
+
     public String generateFileName(MultipartFile file, String fileName) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
@@ -33,6 +45,21 @@ public class FileService {
 
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
         return fileFullName + "." + fileExtension;
+    }
+
+    public String saveFile(MultipartFile file, String fileName) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "public_id", fileName,
+                    "folder", "real-estate-images"
+            ));
+            log.info("*******************************************************");
+            log.info("Images URL : ");
+            log.info(uploadResult.get("url").toString());
+            return uploadResult.get("url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload file to Cloudinary", e);
+        }
     }
 
     /*public String saveFile(MultipartFile file, String fileName) {
@@ -55,29 +82,6 @@ public class FileService {
         // Return the URL of the saved file
         return domainName + IMAGES_PATH + generatedFileName;
     }*/
-
-    public String saveFile(MultipartFile file, String fileName) {
-        try {
-            // Ensure the directory exists
-            Path uploadDirectory = Paths.get(directoryName);
-            if (!Files.exists(uploadDirectory)) {
-                Files.createDirectories(uploadDirectory);
-            }
-
-            // Generate file name
-            String generatedFileName = generateFileName(file, fileName);
-            String filePath = uploadDirectory.resolve(generatedFileName).toString();
-
-            // Save the file locally
-            file.transferTo(new File(filePath));
-
-            // Return the URL for accessing the file (no BackEndRealEstate)
-            return domainName + IMAGES_PATH + generatedFileName;
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save file: " + e.getMessage(), e);
-        }
-    }
 
     public String updateFile(MultipartFile newFile, String fileName, String oldFilePath) {
         if (oldFilePath != null) {
