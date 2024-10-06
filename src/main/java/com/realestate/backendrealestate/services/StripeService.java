@@ -46,8 +46,6 @@ import java.util.stream.Collectors;
 
 public class StripeService {
 
-
-
     @Value("${clientUrl.successPayment}")
     private String clientSuccessPaymentUrl ;
 
@@ -56,6 +54,12 @@ public class StripeService {
 
     @Value("${clientUrl.canceledPayment}")
     private String clientCanceledPaymentUrl;
+
+    @Value("${clientUrl.successReservation}")
+    private String reservationDonePaymentUrl;
+
+    @Value("${clientUrl.servicePayed}")
+    private String servicePayedPaymentUrl;
 
     private final SecurityService securityService;
     private final PropertyService propertyService;
@@ -211,7 +215,7 @@ public class StripeService {
             SessionCreateParams paramsBuilder = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setCustomer(customer.getId())
-                    .setSuccessUrl("http://localhost:4200?reservation=done")
+                    .setSuccessUrl(reservationDonePaymentUrl)
                     .setCancelUrl(clientCanceledPaymentUrl)
                     .addAllLineItem(lineItemList)
                     .putAllMetadata(metadata)
@@ -275,7 +279,7 @@ public class StripeService {
             SessionCreateParams paramsBuilder = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setCustomer(customer.getId())
-                    .setSuccessUrl("http://localhost:4200/client/servicePayed")
+                    .setSuccessUrl(servicePayedPaymentUrl)
                     .setCancelUrl(clientCanceledPaymentUrl)
                     .addAllLineItem(lineItemList)
                     .putAllMetadata(metadata)
