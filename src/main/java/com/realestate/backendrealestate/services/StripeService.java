@@ -120,7 +120,7 @@ public class StripeService {
      //       Customer customer = findOrCreateCustomer("ok@gmail.com");
             Customer customer = findOrCreateCustomer(authenticatedUser);
 
-            BigDecimal totalAmount = BigDecimal.valueOf(pjServicesService.getAnnualClientSubscriptionPrice());
+            BigDecimal totalAmount = BigDecimal.valueOf(pjServicesService.getAnnualClientSubscriptionPrice() * 100) ;
 
             Map<String, String> metadata = new HashMap<>();
             metadata.put("subscription", "client");
@@ -170,9 +170,9 @@ public class StripeService {
 //        Customer customer = findOrCreateCustomer("ok@gmail.com");
             Customer customer = findOrCreateCustomer(securityService.getAuthenticatedUser());
 
-            double reservationPrice = reservationService.getReservationById(reservationPaymentRequest.getReservationId()).getPrice();
+            double reservationPrice = reservationService.getReservationById(reservationPaymentRequest.getReservationId()).getPrice() * 100;
 
-            double pjServicesPrice = reservationPaymentRequest.getPjServiceIds().stream().mapToDouble(pjServicesService::getPjServicePrice).sum();
+            double pjServicesPrice = reservationPaymentRequest.getPjServiceIds().stream().mapToDouble(pjServicesService::getPjServicePrice).sum() * 100;
 
             double total = reservationPrice + pjServicesPrice;
 
@@ -197,7 +197,7 @@ public class StripeService {
                             .setQuantity(1L)
                             .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
                                     .setCurrency("EUR")
-                                    .setUnitAmount((long) pjServicesService.getPjServicePrice(pjServiceId))
+                                    .setUnitAmount((long) pjServicesService.getPjServicePrice(pjServiceId) * 100)
                                     .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                             .setName(pjServicesService.getPjServiceById(pjServiceId).getTitle())
                                             .setDescription("Used for reservation with id :"+reservationPaymentRequest.getReservationId())
@@ -253,6 +253,8 @@ public class StripeService {
                             .reduce(BigDecimal.ZERO, BigDecimal::add))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+            totalAmount = totalAmount.multiply(new BigDecimal(100));
+
             log.info("Total of amount all services {} : {}",pjServicesPaymentRequest.getPropertyServiceCheckouts(),totalAmount);
 
             List<SessionCreateParams.LineItem> lineItemList = pjServicesPaymentRequest.getPropertyServiceCheckouts().stream()
@@ -261,7 +263,7 @@ public class StripeService {
                                     .setQuantity(1L)
                                     .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
                                             .setCurrency("EUR")
-                                            .setUnitAmount((long) pjServicesService.getPjServicePrice(pjServiceId))
+                                            .setUnitAmount((long) pjServicesService.getPjServicePrice(pjServiceId) * 100)
                                             .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                     .setName(pjServicesService.getPjServiceById(pjServiceId).getTitle())
                                                     .setDescription("Used for property with id :"+propertyServicePayment.getPropertyId())
